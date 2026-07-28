@@ -1,0 +1,63 @@
+name: Fix Odyssey and venue images
+
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-odyssey-images.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch planner
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text()
+
+          s = s.replace(
+            'Book each piece from the direct link, then mark it confirmed. IMAX stays informational only because that part is already handled.',
+            'Book each remaining piece from the direct link, then mark it confirmed. The Odyssey tickets are already purchased and included in the planner.'
+          )
+
+          universal_row = '<div class="check"><div><b>Universal Studios</b><small id="universalState">Not purchased</small></div><div class="check-actions"><a class="link" href="https://www.universalstudioshollywood.com/web/en/us/theme-park-ticket-deals" target="_blank" rel="noopener">Buy tickets ↗</a><button class="confirm" data-confirm="universal">Mark purchased</button></div></div>'
+          odyssey_row = universal_row + '<div class="check"><div><b>The Odyssey · 70mm IMAX</b><small>Purchased · Saturday at 2:50 PM · TCL Chinese Theatre</small></div><div class="check-actions"><span class="confirm on" aria-label="Confirmed">✓ Confirmed</span></div></div>'
+          s = s.replace(universal_row, odyssey_row)
+
+          s = s.replace(
+            "confirmed:{universal:false,hotel:false,restaurant:false,museum:false,parking:false}",
+            "confirmed:{universal:false,odyssey:true,hotel:false,restaurant:false,museum:false,parking:false}"
+          )
+          s = s.replace(
+            "const keys=['universal','hotel','restaurant','museum','parking']",
+            "const keys=['universal','odyssey','hotel','restaurant','museum','parking']"
+          )
+
+          old_cara_hotel = 'https://cara-hotel.com/wp-content/uploads/2021/06/cara-hotel-courtyard.jpg'
+          old_cara_rest = 'https://cara-hotel.com/wp-content/uploads/2021/06/cara-hotel-restaurant.jpg'
+          cara_img = 'https://images.squarespace-cdn.com/content/v1/5ee3b2061e02b67d143e9f19/1658433362955-1IDUDG33R40NUMRF3VIR/courtyard.jpg?format=1200w'
+          s = s.replace(old_cara_hotel, cara_img)
+          s = s.replace(old_cara_rest, cara_img)
+
+          old_lacma = 'https://www.lacma.org/sites/default/files/styles/exhibition_image/public/2026-04/david-geffen-galleries-lacma.jpg'
+          lacma_img = 'https://images.unsplash.com/photo-1561839561-b13bcfe95249?auto=format&fit=crop&w=1200&q=85'
+          s = s.replace(old_lacma, lacma_img)
+
+          s = s.replace('alt="Cara Hotel"><div class="body">', 'alt="Cara Hotel" onerror="this.onerror=null;this.src=\'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=85\'"><div class="body">')
+          s = s.replace('alt="Cara restaurant"><div class="body">', 'alt="Cara restaurant" onerror="this.onerror=null;this.src=\'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=85\'"><div class="body">')
+          s = s.replace('alt="LACMA"><div class="body">', 'alt="LACMA" onerror="this.onerror=null;this.src=\'https://images.unsplash.com/photo-1549490349-8643362247b5?auto=format&fit=crop&w=1200&q=85\'"><div class="body">')
+
+          p.write_text(s)
+          PY
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Include purchased Odyssey tickets and fix venue images"
+          git push
