@@ -1,0 +1,69 @@
+name: Apply site enhancements
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/site-enhancements.yml
+
+permissions:
+  contents: write
+
+jobs:
+  enhance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Patch planner
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text()
+
+          menus = {
+            'Mother Wolf': 'https://www.motherwolfla.com/menu/',
+            'Cara': 'https://cara-hotel.com/restaurant/',
+            'Musso & Frank': 'https://mussoandfrank.com/menu/appetizers/',
+            'Yamashiro': 'https://yamashirohollywood.com/main-menu',
+            'Firefly': 'https://www.fireflystudiocity.com/menu',
+            'Kismet': 'https://www.kismetla.com/menu'
+          }
+          for name, url in menus.items():
+              start = s.find(f'data-name="{name}"')
+              if start < 0:
+                  continue
+              end = s.find('</article>', start)
+              chunk = s[start:end]
+              if 'View menu ↗' not in chunk:
+                  chunk = chunk.replace('<button class="choose">Choose</button>', f'<button class="choose">Choose</button><a class="link" href="{url}" target="_blank" rel="noopener">View menu ↗</a>', 1)
+                  s = s[:start] + chunk + s[end:]
+
+          museum_close = '</div></section>\n<section class="section"><div class="head"><div><div class="eyebrow">The story</div>'
+          if 'Petersen Automotive Museum' not in s:
+              extras = '''<article class="card" data-type="museum" data-name="Petersen Automotive Museum" data-price="44" data-url="https://www.petersen.org/tickets"><img src="https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=1200&q=85" alt="Petersen Automotive Museum"><div class="body"><div class="kicker">Museum Row</div><h3>Petersen Automotive Museum</h3><div class="price">About $44 for two</div><div class="meta">Directly across from the Academy Museum and easy before Hollywood.</div><div class="card-actions"><button class="choose">Choose</button><a class="link" href="https://www.petersen.org/tickets" target="_blank" rel="noopener">Buy tickets ↗</a></div></div></article><article class="card" data-type="museum" data-name="The Broad" data-price="0" data-url="https://ticketing.thebroad.org/"><img src="https://images.unsplash.com/photo-1561214115-f2f134cc4912?auto=format&fit=crop&w=1200&q=85" alt="The Broad"><div class="body"><div class="kicker">Downtown LA</div><h3>The Broad</h3><div class="price">Free timed entry</div><div class="meta">Best if the hotel is downtown; less efficient before the Hollywood movie.</div><div class="card-actions"><button class="choose">Choose</button><a class="link" href="https://ticketing.thebroad.org/" target="_blank" rel="noopener">Reserve entry ↗</a></div></div></article><article class="card" data-type="museum" data-name="Natural History Museum" data-price="36" data-url="https://nhm.org/plan-your-visit/tickets"><img src="https://images.unsplash.com/photo-1566127992631-137a642a90f4?auto=format&fit=crop&w=1200&q=85" alt="Natural History Museum Los Angeles"><div class="body"><div class="kicker">Exposition Park</div><h3>Natural History Museum</h3><div class="price">About $36 for two</div><div class="meta">Dinosaurs and gems; a better Sunday alternate than a Saturday detour.</div><div class="card-actions"><button class="choose">Choose</button><a class="link" href="https://nhm.org/plan-your-visit/tickets" target="_blank" rel="noopener">Buy tickets ↗</a></div></div></article>'''
+              s = s.replace(museum_close, extras + museum_close, 1)
+
+          if '<div class="eyebrow">On the way</div>' not in s:
+              food = '''<section class="section"><div class="head"><div><div class="eyebrow">On the way</div><h2>Coffee, lunch, and snacks without the detour</h2></div><div class="sub">These stops sit where you already are instead of turning food into another cross-town mission.</div></div><div class="grid"><article class="card"><img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1200&q=85" alt="Coffee"><div class="body"><div class="kicker">Friday · Universal CityWalk</div><h3>Early coffee + park breakfast</h3><div class="meta">Coffee at CityWalk before rope drop, then meals and snacks inside the park so opening-hour ride time is protected.</div><div class="card-actions"><a class="link" href="https://www.universalstudioshollywood.com/web/en/us/things-to-do/dining" target="_blank" rel="noopener">Universal dining ↗</a></div></div></article><article class="card"><img src="https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1200&q=85" alt="Museum district lunch"><div class="body"><div class="kicker">Saturday · Museum Row</div><h3>Fanny's at the Academy Museum</h3><div class="meta">Coffee or lunch without moving the car before leaving for TCL Chinese Theatre.</div><div class="card-actions"><a class="link" href="https://www.academymuseum.org/en/fannys" target="_blank" rel="noopener">Menu + details ↗</a></div></div></article><article class="card"><img src="https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=1200&q=85" alt="Brunch"><div class="body"><div class="kicker">Sunday · Los Feliz</div><h3>Little Dom's after the hike</h3><div class="meta">A natural Griffith-to-brunch stop before heading south or choosing a Sunday museum.</div><div class="card-actions"><a class="link" href="https://www.littledoms.com/" target="_blank" rel="noopener">Menu + details ↗</a></div></div></article></div></section>'''
+              s = s.replace('<section class="section"><div class="head"><div><div class="eyebrow">The story</div>', food + '<section class="section"><div class="head"><div><div class="eyebrow">The story</div>', 1)
+
+          old_friday = '<h3>Arrival + Universal</h3><div class="event"><b>Drive north</b><div class="meta">Check in or leave bags.</div></div><div class="event"><b>Universal Studios</b><div class="meta">Attack strategy determined above.</div></div><div class="event"><b>Dinner, deliberately unplanned</b>'
+          new_friday = '<h3>Universal from rope drop to close</h3><div class="event"><b>5:15–5:30 AM · Leave San Diego</b><div class="meta">Aim to park 45–60 minutes before the posted opening time.</div></div><div class="event"><b>Open → close · Universal Studios</b><div class="meta">Coffee, breakfast, lunch, and snacks stay inside Universal or CityWalk.</div></div><div class="event"><b>After park close · Hotel check-in</b><div class="meta">Use mobile check-in or call ahead so the room is held for a late arrival.</div></div><div class="event"><b>Late dinner, deliberately flexible</b>'
+          s = s.replace(old_friday, new_friday, 1)
+
+          s = s.replace('<div class="event"><b>Museum, maybe</b><div class="meta">Only if we have museum energy.</div></div>', '<div class="event"><b>10:00 AM · Museum, maybe</b><div class="meta">Academy, LACMA, or Petersen keeps the route compact.</div></div><div class="event"><b>12:15 PM · Coffee or lunch at Fanny’s</b><div class="meta">Leave Museum Row around 1:30 PM for Hollywood.</div></div>', 1)
+          s = s.replace('<div class="event"><b>Fern Dell → Griffith Observatory</b><div class="meta">Early enough to feel virtuous, not punished.</div></div><div class="event"><b>Brunch, obviously</b></div>', '<div class="event"><b>8:00 AM · Fern Dell → Griffith Observatory</b><div class="meta">Start before the heat and parking crush.</div></div><div class="event"><b>10:30 AM · Brunch at Little Dom’s</b><div class="meta">Directly on the way out of Los Feliz.</div></div>', 1)
+
+          p.write_text(s)
+          PY
+      - name: Commit planner update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Enhance museums, dining links, and route timing" || exit 0
+          git push
