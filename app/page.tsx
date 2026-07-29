@@ -53,15 +53,6 @@ const quotes = [
   "“You make me want to be a better man.”",
 ];
 
-const chapterLinks = [
-  ["chapter-1", "1 · Secret Lairs"],
-  ["chapter-2", "2 · Main Missions"],
-  ["chapter-3", "3 · Side Quests"],
-  ["chapter-4", "4 · Dinner Duel"],
-  ["chapter-5", "5 · Percy’s Picks"],
-  ["mission-board", "Final · Mission Board"],
-];
-
 function PlaceImage({ item }: { item: Choice }) {
   return (
     <div className="card-image">
@@ -158,13 +149,15 @@ export default function Home() {
   return (
     <main>
       <section className="cover" id="top">
-        <img src="/assets/reference/comic-cover.webp" alt="Slice, Dice and Percy overlooking Los Angeles at sunset" />
+        <img src="/assets/reference/comic-cover.webp" alt="Five illustrated chapter panels for the Los Angeles anniversary adventure" />
         <div className="cover-shade" />
         <div className="issue-burst">SPECIAL<br />2ND ANNIVERSARY<br />EDITION!</div>
         <div className="cover-title"><small>LOS ANGELES PRESENTS</small><h1>SLICE, DICE<br /><em>&amp; PERCY</em></h1><p>THE ANNIVERSARY ADVENTURE</p></div>
-        <button className="character-hit slice-hit" onClick={() => setEffect("slice")} aria-label="Slice" />
-        <button className="character-hit dice-hit" onClick={() => setEffect("dice")} aria-label="Dice" />
-        <button className="character-hit percy-hit" onClick={() => setEffect("percy")} aria-label="Percy" />
+        <a className="chapter-art-link" style={{ left: "0%" }} href="#chapter-1" aria-label="Open Chapter 1: Secret Lairs" />
+        <a className="chapter-art-link" style={{ left: "20%" }} href="#chapter-2" aria-label="Open Chapter 2: Main Missions" />
+        <a className="chapter-art-link" style={{ left: "40%" }} href="#chapter-3" aria-label="Open Chapter 3: Side Quests" />
+        <a className="chapter-art-link" style={{ left: "60%" }} href="#chapter-4" aria-label="Open Chapter 4: Dinner Duel" />
+        <a className="chapter-art-link" style={{ left: "80%" }} href="#chapter-5" aria-label="Open Chapter 5: Percy’s Picks" />
         <a className="start-ribbon" href="#chapter-1">OPEN THE ISSUE ↓</a>
       </section>
 
@@ -173,10 +166,6 @@ export default function Home() {
         {effect === "dice" && <><div className="dice-storm">{Array.from({ length: 18 }).map((_, i) => <i key={i}>⚄</i>)}</div><strong>{quotes[Math.floor(Math.random() * quotes.length)]}</strong></>}
         {effect === "percy" && <><strong>THINK FAST!</strong><div className="percy-charge">🧸</div><b>WHUMP!</b></>}
       </div>}
-
-      <nav aria-label="Chapter navigation" style={{ position: "sticky", top: 0, zIndex: 20, display: "flex", gap: 8, overflowX: "auto", padding: "12px 18px", background: "#16110e", borderBottom: "5px solid #f7b51e" }}>
-        {chapterLinks.map(([id, label]) => <a key={id} href={`#${id}`} style={{ flex: "0 0 auto", color: "#16110e", background: "#f7b51e", border: "3px solid white", padding: "8px 12px", textDecoration: "none", boxShadow: "3px 3px 0 #d8332a" }}>{label}</a>)}
-      </nav>
 
       <div className="story-shell">
         <section className="chapter" id="chapter-1">
