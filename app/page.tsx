@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { Map as LeafletMap } from "leaflet";
 
 type Action = { label: string; url: string };
 type Choice = {
@@ -16,20 +17,59 @@ type Choice = {
   actions: Action[];
 };
 
+type Place = {
+  address: string;
+  lat: number;
+  lng: number;
+};
+
+const places: Record<string, Place> = {
+  "The Delphi": { address: "550 S Flower St, Los Angeles, CA 90071", lat: 34.0503, lng: -118.2571 },
+  "Millennium Biltmore Los Angeles": { address: "506 S Grand Ave, Los Angeles, CA 90071", lat: 34.0498, lng: -118.2542 },
+  "Hollywood Franklin": { address: "6141 Franklin Ave, Los Angeles, CA 90028", lat: 34.1053, lng: -118.3234 },
+  "The LINE LA": { address: "3515 Wilshire Blvd, Los Angeles, CA 90010", lat: 34.0619, lng: -118.3009 },
+  "Los Angeles Athletic Club": { address: "431 W 7th St, Los Angeles, CA 90014", lat: 34.0469, lng: -118.2553 },
+  "Cara Hotel": { address: "1730 N Western Ave, Los Angeles, CA 90027", lat: 34.1022, lng: -118.3090 },
+  "Palihotel Hollywood": { address: "7023 Sunset Blvd, Los Angeles, CA 90028", lat: 34.0982, lng: -118.3430 },
+  "Universal Studios Hollywood": { address: "100 Universal City Plaza, Universal City, CA 91608", lat: 34.1381, lng: -118.3534 },
+  "TCL Chinese Theatre": { address: "6925 Hollywood Blvd, Hollywood, CA 90028", lat: 34.1020, lng: -118.3409 },
+  "Academy Museum of Motion Pictures": { address: "6067 Wilshire Blvd, Los Angeles, CA 90036", lat: 34.0634, lng: -118.3609 },
+  LACMA: { address: "5905 Wilshire Blvd, Los Angeles, CA 90036", lat: 34.0638, lng: -118.3592 },
+  "Griffith Observatory and Griffith Park Hike": { address: "2800 E Observatory Rd, Los Angeles, CA 90027", lat: 34.1184, lng: -118.3004 },
+  "Mother Wolf": { address: "1545 Wilcox Ave, Los Angeles, CA 90028", lat: 34.0994, lng: -118.3311 },
+  "Cara Restaurant": { address: "1730 N Western Ave, Los Angeles, CA 90027", lat: 34.1022, lng: -118.3090 },
+  "Musso & Frank Grill": { address: "6667 Hollywood Blvd, Los Angeles, CA 90028", lat: 34.1016, lng: -118.3354 },
+  "Yamashiro Hollywood": { address: "1999 N Sycamore Ave, Los Angeles, CA 90068", lat: 34.1054, lng: -118.3421 },
+  Firefly: { address: "11720 Ventura Blvd, Studio City, CA 91604", lat: 34.1433, lng: -118.3884 },
+  Kismet: { address: "4648 Hollywood Blvd, Los Angeles, CA 90027", lat: 34.1016, lng: -118.2911 },
+  "Go Get Em Tiger": { address: "230 N Larchmont Blvd, Los Angeles, CA 90004", lat: 34.0754, lng: -118.3233 },
+  "Maru Coffee": { address: "1936 Hillhurst Ave, Los Angeles, CA 90027", lat: 34.1066, lng: -118.2875 },
+  "Alfred Coffee": { address: "3515 Wilshire Blvd, Los Angeles, CA 90010", lat: 34.0619, lng: -118.3009 },
+  "Voodoo Doughnut at Universal CityWalk": { address: "100 Universal City Plaza, Universal City, CA 91608", lat: 34.1366, lng: -118.3530 },
+  Tartine: { address: "1925 Arizona Ave, Santa Monica, CA 90404", lat: 34.0310, lng: -118.4650 },
+  "Grand Central Market": { address: "317 S Broadway, Los Angeles, CA 90013", lat: 34.0507, lng: -118.2488 },
+  "Fanny’s": { address: "6067 Wilshire Blvd, Los Angeles, CA 90036", lat: 34.0634, lng: -118.3609 },
+  "Little Dom’s": { address: "2128 Hillhurst Ave, Los Angeles, CA 90027", lat: 34.1093, lng: -118.2876 },
+  "Rendezvous Court": { address: "506 S Grand Ave, Los Angeles, CA 90071", lat: 34.0498, lng: -118.2542 },
+};
+
+const hotelParking = [110, 110, 0, 143, 0, 0, 80];
+const verifiedOn = "Verified July 29, 2026";
+
 const hotels: Choice[] = [
   {
     name: "The Delphi",
-    price: 402,
+    price: 395,
     image: "/assets/venues/the-delphi.jpg",
     imagePosition: "center 58%",
-    note: "Two nights · Downtown Los Angeles",
+    note: `Aug 7–9 · 2 adults · taxes/fees included · ${verifiedOn}`,
     actions: [{ label: "BOOK", url: "https://www.thedelphihotel.com/" }],
   },
   {
     name: "Millennium Biltmore Los Angeles",
     price: 441,
     image: "/assets/venues/the-biltmore.webp",
-    note: "Two nights · Old-Hollywood grandeur",
+    note: `Aug 7–9 · 2 adults · taxes/fees included · ${verifiedOn}`,
     actions: [
       {
         label: "BOOK",
@@ -49,7 +89,7 @@ const hotels: Choice[] = [
     price: 507,
     image: "/assets/venues/the-line-la.webp",
     imagePosition: "center 70%",
-    note: "Two nights · Koreatown cool",
+    note: `Aug 7–9 · 2 adults · taxes/fees included · ${verifiedOn}`,
     actions: [
       { label: "BOOK", url: "https://www.thelinehotel.com/los-angeles/" },
     ],
@@ -84,7 +124,7 @@ const mainMissions: Choice[] = [
     name: "Universal Studios Hollywood: General Admission",
     price: 218,
     image: "/assets/venues/universal-studios.jpeg",
-    note: "Two people · General admission",
+    note: "Friday, Aug 7 · 2 adults · date-selected checkout required",
     actions: [
       {
         label: "TICKETS",
@@ -96,7 +136,7 @@ const mainMissions: Choice[] = [
     name: "Universal Studios Hollywood: Universal Express",
     price: 378,
     image: "/assets/venues/universal-studios.jpeg",
-    note: "Two people · Express access",
+    note: "Friday, Aug 7 · 2 adults · date-selected checkout required",
     actions: [
       {
         label: "TICKETS",
@@ -107,8 +147,9 @@ const mainMissions: Choice[] = [
   {
     name: "The Odyssey in 70mm IMAX",
     price: 70,
-    image: "/assets/reference/comic-cover.webp",
-    note: "Two people · Already purchased",
+    image: "/assets/events/the-odyssey-official-poster.jpg",
+    imagePosition: "center 28%",
+    note: "Saturday, Aug 8 · 2:50 PM · TCL Chinese Theatre · purchased",
     locked: true,
     actions: [{ label: "MOVIE", url: "https://www.theodysseymovie.com/" }],
   },
@@ -119,16 +160,16 @@ const sideQuests: Choice[] = [
     name: "Academy Museum of Motion Pictures",
     price: 50,
     image: "/assets/venues/academy-museum.jpg",
-    note: "Two people",
+    note: `Two adults · $25 each · ${verifiedOn}`,
     actions: [
       { label: "TICKETS", url: "https://www.academymuseum.org/en/tickets" },
     ],
   },
   {
     name: "LACMA",
-    price: 50,
+    price: 60,
     image: "/assets/venues/lacma-urban-light.webp",
-    note: "Two people",
+    note: `Two non-LA County adults · $30 each · ${verifiedOn}`,
     actions: [{ label: "TICKETS", url: "https://www.lacma.org/tickets" }],
   },
   {
@@ -400,6 +441,44 @@ function ChoiceCard({
   );
 }
 
+function MissionMap({ stops }: { stops: { name: string; subtitle: string }[] }) {
+  const mapNode = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!mapNode.current || !stops.length) return;
+    let map: LeafletMap | undefined;
+    void import("leaflet").then((L) => {
+      if (!mapNode.current) return;
+      map = L.map(mapNode.current, { scrollWheelZoom: false });
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "© OpenStreetMap contributors",
+      }).addTo(map);
+      const bounds: [number, number][] = [];
+      stops.forEach((stop, index) => {
+        const place = places[stop.name];
+        if (!place) return;
+        bounds.push([place.lat, place.lng]);
+        L.circleMarker([place.lat, place.lng], {
+          radius: 10,
+          color: "#111",
+          weight: 3,
+          fillColor: "#efb321",
+          fillOpacity: 1,
+        })
+          .addTo(map!)
+          .bindPopup(`<b>${index + 1}. ${stop.name}</b><br>${stop.subtitle}<br>${place.address}`);
+      });
+      if (bounds.length === 1) map.setView(bounds[0], 13);
+      else map.fitBounds(bounds, { padding: [28, 28] });
+    });
+    return () => {
+      map?.remove();
+    };
+  }, [stops]);
+
+  return <div className="mission-map" ref={mapNode} aria-label="Interactive map of the selected itinerary" />;
+}
+
 export default function Home() {
   const [hotel, setHotel] = useState<number | null>(null);
   const [mission, setMission] = useState<number | null>(null);
@@ -408,6 +487,7 @@ export default function Home() {
   const [picks, setPicks] = useState<number[]>([]);
   const [taxes, setTaxes] = useState(true);
   const [effect, setEffect] = useState<"slice" | "dice" | "percy" | null>(null);
+  const [dispatchOpen, setDispatchOpen] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("slice-dice-percy-plan");
@@ -441,7 +521,13 @@ export default function Home() {
       picks.reduce((s, i) => s + percyPicks[i].price, 0),
     [hotel, mission, quests, dinner, picks],
   );
-  const tax = taxes ? Math.round(subtotal * 0.095) : 0;
+  const tripExtras =
+    (mission === null ? 0 : 40) +
+    (hotel === null ? 0 : hotelParking[hotel]) +
+    (quests.includes(0) ? 10 : 0) +
+    (quests.includes(1) ? 24 : 0) +
+    55;
+  const tax = taxes ? tripExtras : 0;
   const total = subtotal + tax;
   const chosenQuestIndexes = sideQuests
     .map((item, i) => ({ item, i }))
@@ -462,8 +548,46 @@ export default function Home() {
     setPicks([]);
     localStorage.removeItem("slice-dice-percy-plan");
   };
+  const itineraryStops = [
+    ...(hotel === null ? [] : [{ name: hotels[hotel].name, subtitle: "Hotel · Aug 7–9" }]),
+    { name: "Universal Studios Hollywood", subtitle: "Friday · 9:00 AM–9:00 PM" },
+    ...(picks.length ? [{ name: percyPicks[picks[0]].name, subtitle: "Saturday · 8:30 AM" }] : []),
+    ...chosenQuestIndexes
+      .filter((i) => !sideQuests[i].locked)
+      .map((i) => ({ name: sideQuests[i].name, subtitle: "Saturday · 10:00 AM" })),
+    { name: "TCL Chinese Theatre", subtitle: "Saturday · 2:50 PM · arrive 2:20 PM" },
+    ...(dinner === null ? [] : [{ name: dinners[dinner].name, subtitle: "Saturday · 7:30 PM" }]),
+    { name: "Griffith Observatory and Griffith Park Hike", subtitle: "Sunday · 9:00 AM" },
+  ];
+  const detailedItinerary = [
+    "FRIDAY · AUGUST 7",
+    "5:15 AM — Leave San Diego",
+    "8:15 AM — Arrive and park at Universal Studios Hollywood",
+    "9:00 AM–9:00 PM — Universal Studios Hollywood",
+    "9:20 PM — Drive to hotel and check in",
+    "",
+    "SATURDAY · AUGUST 8",
+    picks.length ? `8:30 AM — ${percyPicks[picks[0]].name}` : "8:30 AM — Coffee near the hotel",
+    quests.includes(0)
+      ? "10:00 AM–12:15 PM — Academy Museum of Motion Pictures"
+      : quests.includes(1)
+        ? "10:00 AM–12:15 PM — LACMA"
+        : "10:00 AM–12:15 PM — Open morning / pool / neighborhood",
+    "12:20 PM — Lunch and drive to Hollywood",
+    "2:20 PM — Arrive at TCL Chinese Theatre",
+    "2:50 PM — The Odyssey in 70mm IMAX (purchased)",
+    dinner === null ? "7:30 PM — Anniversary dinner (choose a restaurant)" : `7:30 PM — Anniversary dinner at ${dinners[dinner].name}`,
+    "9:45–11:45 PM — Slice’s Mystery Box",
+    "",
+    "SUNDAY · AUGUST 9",
+    "8:00 AM — Check out / leave bags with hotel",
+    "9:00–11:00 AM — Fern Dell to Griffith Observatory hike",
+    picks.length > 1 ? `11:30 AM — ${percyPicks[picks[1]].name}` : "11:30 AM — Brunch",
+    "1:30 PM — Collect bags and depart Los Angeles",
+  ];
   const summary = [
     "SLICE, DICE & PERCY — LA ANNIVERSARY MISSION",
+    "August 7–9, 2026 · Two adults",
     hotel === null
       ? "Hotel: TBD"
       : `Hotel: ${hotels[hotel].name} — $${hotels[hotel].price}`,
@@ -474,7 +598,10 @@ export default function Home() {
     `Side quests: ${chosenQuestIndexes.map((i) => sideQuests[i].name).join(", ")}`,
     `Dinner: ${dinner === null ? "TBD" : dinners[dinner].name}`,
     `Percy’s Picks: ${picks.length ? picks.map((i) => percyPicks[i].name).join(", ") : "None"}`,
-    `Estimated total: $${total}`,
+    taxes ? `Known parking + estimated gas: $${tax}` : "Parking and gas excluded",
+    `Planning total: $${total}`,
+    "",
+    ...detailedItinerary,
   ].join("\n");
   const mail = `mailto:?subject=${encodeURIComponent("Our LA Anniversary Mission")}&body=${encodeURIComponent(summary)}`;
 
@@ -544,18 +671,9 @@ export default function Home() {
           {effect === "slice" && (
             <>
               <div className="rainbow" />
-              {Array.from({ length: 14 }).map((_, i) => (
-                <div
-                  className={`dolphin d${(i % 2) + 1}`}
-                  key={i}
-                  style={{
-                    animationDelay: `${i * 0.08}s`,
-                    top: `${5 + (i % 6) * 14}%`,
-                  }}
-                >
-                  🐬
-                </div>
-              ))}
+              <img className="real-dolphin dolphin-one" src="/assets/events/dolphin-swim.png" alt="" />
+              <img className="real-dolphin dolphin-two" src="/assets/events/dolphin-rise.png" alt="" />
+              <img className="real-dolphin dolphin-jump" src="/assets/events/dolphin-jump.png" alt="" />
               <strong>FULL BODY!</strong>
             </>
           )}
@@ -573,13 +691,12 @@ export default function Home() {
           )}
           {effect === "percy" && (
             <>
-              <strong>THINK FAST!</strong>
+              <strong className="think-fast">THINK FAST!</strong>
               <div
                 className="percy-charge"
                 role="img"
                 aria-label="Percy charges toward the screen"
               />
-              <b>WHUMP!</b>
             </>
           )}
         </div>
@@ -749,7 +866,7 @@ export default function Home() {
                 checked={taxes}
                 onChange={(e) => setTaxes(e.target.checked)}
               />
-              <span>Estimate taxes &amp; fees</span>
+              <span>Include known parking + $55 estimated gas</span>
               <b>${tax}</b>
             </label>
             <div className="total">
@@ -758,7 +875,7 @@ export default function Home() {
             </div>
             <div className="board-actions">
               <button onClick={save}>SAVE ITINERARY</button>
-              <a href={mail}>EMAIL ITINERARY</a>
+              <button onClick={() => setDispatchOpen(true)}>EMAIL ITINERARY</button>
               <button onClick={reset} className="danger">
                 RESET
               </button>
@@ -766,6 +883,52 @@ export default function Home() {
           </div>
         </section>
       </div>
+      {dispatchOpen && (
+        <div className="dispatch-backdrop" role="presentation" onMouseDown={() => setDispatchOpen(false)}>
+          <section
+            className="dispatch"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="dispatch-title"
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            <button className="dispatch-close" onClick={() => setDispatchOpen(false)} aria-label="Close itinerary">×</button>
+            <div className="dispatch-heading">
+              <span>MISSION DISPATCH · AUGUST 7–9, 2026</span>
+              <h2 id="dispatch-title">YOUR WEEKEND, MAPPED.</h2>
+              <p>The route updates from the hotel, museum, dinner and snack choices on the Mission Board.</p>
+            </div>
+            <MissionMap stops={itineraryStops} />
+            <div className="dispatch-grid">
+              {["FRIDAY · AUGUST 7", "SATURDAY · AUGUST 8", "SUNDAY · AUGUST 9"].map((day, dayIndex) => {
+                const start = detailedItinerary.indexOf(day);
+                const next = dayIndex === 2 ? detailedItinerary.length : detailedItinerary.indexOf(["SATURDAY · AUGUST 8", "SUNDAY · AUGUST 9"][dayIndex]);
+                return (
+                  <article key={day}>
+                    <h3>{day}</h3>
+                    {detailedItinerary.slice(start + 1, next).filter(Boolean).map((line) => <p key={line}>{line}</p>)}
+                  </article>
+                );
+              })}
+            </div>
+            <div className="dispatch-cost">
+              <span>PLANNING TOTAL FOR TWO</span>
+              <strong>${total}</strong>
+              <small>Hotel totals include listed taxes/fees. Restaurant and snack totals are menu-based estimates; Universal’s Aug. 7 price must be confirmed in its date-selected checkout.</small>
+            </div>
+            <div className="dispatch-actions">
+              <a href={mail}>OPEN EMAIL DRAFT</a>
+              <a
+                target="_blank"
+                rel="noreferrer"
+                href={`https://www.google.com/maps/dir/${itineraryStops.map((stop) => encodeURIComponent(places[stop.name]?.address ?? stop.name)).join("/")}`}
+              >
+                OPEN TURN-BY-TURN MAP ↗
+              </a>
+            </div>
+          </section>
+        </div>
+      )}
       <footer>
         <div>SLICE ★ DICE ★ PERCY</div>
         <p>
