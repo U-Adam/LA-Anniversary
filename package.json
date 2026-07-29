@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/apply-production-visuals.mjs && node scripts/restore-original-dolphins.cjs && node scripts/fix-cover-date.cjs && next build",
+    "build": "node scripts/apply-confirmed-bookings.cjs && node scripts/apply-production-visuals.mjs && node scripts/restore-original-dolphins.cjs && node scripts/fix-cover-date.cjs && next build",
     "start": "next start"
   },
   "dependencies": {
