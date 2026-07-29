@@ -41,15 +41,11 @@ source = source.replace(
 );
 source = source.replace('setMission(s.mission ?? null);', 'setMission(0);');
 source = source.replace('setMission(null);', 'setMission(0);');
-
 source = source.replace(
   '      (mission === null ? 0 : mainMissions[mission].price) +\n      70 +',
   '      mainMissions[0].price +\n      70 +',
 );
-source = source.replace(
-  '    (mission === null ? 0 : 40) +',
-  '    40 +',
-);
+source = source.replace('    (mission === null ? 0 : 40) +', '    40 +');
 source = source.replace(
   '    mission === null\n      ? "Universal: TBD"\n      : `Universal: ${mainMissions[mission].name} — $${mainMissions[mission].price}`,',
   '    `Universal: ${mainMissions[0].name} — $${mainMissions[0].price.toFixed(2)} — confirmed`,',
@@ -61,9 +57,9 @@ source = source.replace(
 
 source = source.replace(
   '  const mail = `mailto:?subject=${encodeURIComponent("Our LA Anniversary Mission")}&body=${encodeURIComponent(summary)}`;',
-  `  const mail = \`mailto:?subject=\${encodeURIComponent("Our LA Anniversary Mission")}&body=\${encodeURIComponent(summary)}\`;
+  String.raw`  const mail = \`mailto:?subject=\${encodeURIComponent("Our LA Anniversary Mission")}&body=\${encodeURIComponent(summary)}\`;
   const downloadCalendar = () => {
-    const esc = (value: string) => value.replace(/\\/g, "\\\\").replace(/,/g, "\\,").replace(/;/g, "\\;").replace(/\\n/g, "\\n");
+    const esc = (value: string) => value.replace(/\\/g, "\\\\").replace(/,/g, "\\,").replace(/;/g, "\\;").replace(/\n/g, "\\n");
     const events = [
       ["20260807T051500", "20260807T081500", "Drive to Los Angeles", "Leave San Diego for Universal Studios Hollywood", "San Diego, CA"],
       ["20260807T081500", "20260807T210000", "Universal Studios Hollywood", "Confirmed Buy a Day, Get a 2nd Day Free tickets for Adam Daniels and Aurora Zo", places["Universal Studios Hollywood"].address],
@@ -75,7 +71,7 @@ source = source.replace(
       ["20260809T090000", "20260809T110000", "Griffith Observatory hike", "Fern Dell to Griffith Observatory", places["Griffith Observatory and Griffith Park Hike"].address],
       ["20260809T133000", "20260809T170000", "Return to San Diego", "Collect bags and depart Los Angeles", places["Palihotel Hollywood"].address],
     ];
-    const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\\.\\d{3}Z$/, "Z");
+    const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
     const body = events.map(([start, end, title, description, location], index) => [
       "BEGIN:VEVENT",
       \`UID:slice-dice-percy-\${index + 1}@la-anniversary\`,
@@ -86,8 +82,8 @@ source = source.replace(
       \`DESCRIPTION:\${esc(description)}\`,
       \`LOCATION:\${esc(location)}\`,
       "END:VEVENT",
-    ].join("\\r\\n")).join("\\r\\n");
-    const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Slice Dice Percy//LA Anniversary//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH", body, "END:VCALENDAR"].join("\\r\\n");
+    ].join("\r\n")).join("\r\n");
+    const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Slice Dice Percy//LA Anniversary//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH", body, "END:VCALENDAR"].join("\r\n");
     const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -99,11 +95,18 @@ source = source.replace(
     URL.revokeObjectURL(url);
   };`,
 );
-
 source = source.replace(
   '              <a href={mail}>OPEN EMAIL DRAFT</a>',
   '              <a href={mail}>OPEN EMAIL DRAFT</a>\n              <button type="button" onClick={downloadCalendar}>ADD TO APPLE CALENDAR</button>',
 );
 
 fs.writeFileSync(path, source);
+
+const cssPath = "app/globals.css";
+let css = fs.readFileSync(cssPath, "utf8");
+if (!css.includes(".dispatch-actions button")) {
+  css += `\n.dispatch-actions button { padding:13px 17px; border:3px solid #111; background:var(--gold); color:#111; font:1000 1rem/1 Arial,sans-serif; cursor:pointer; }\n`;
+  fs.writeFileSync(cssPath, css);
+}
+
 console.log("Applied confirmed Universal tickets, Odyssey widescreen still, and calendar export.");
