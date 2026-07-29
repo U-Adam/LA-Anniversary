@@ -119,7 +119,6 @@ export default function Home() {
       <button className="character-hit dice-hit" onClick={() => setEffect("dice")} aria-label="Animate Dice" />
       <button className="character-hit percy-hit" onClick={() => setEffect("percy")} aria-label="Animate Percy" />
       {["chapter-1", "chapter-2", "chapter-3", "chapter-4", "chapter-5"].map((id, i) => <a key={id} className="chapter-art-link" href={`#${id}`} style={{ left: `${i * 20}%` }} aria-label={`Jump to chapter ${i + 1}`} />)}
-      <a className="start-ribbon" href="#chapter-1">OPEN THE ISSUE ↓</a>
     </section>
 
     {effect && <div className={`effect effect-${effect}`} onClick={() => setEffect(null)}>
