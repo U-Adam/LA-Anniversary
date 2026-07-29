@@ -1,0 +1,102 @@
+name: Revert dolphin gag and publish
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/revert-dolphin-gag.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Restore original dolphin gag with a bigger swarm
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          page = Path('app/page.tsx')
+          text = page.read_text()
+          old = '''              <div className="rainbow" />
+              <img className="real-dolphin dolphin-one" src="/assets/events/dolphin-swim.png" alt="" />
+              <img className="real-dolphin dolphin-two" src="/assets/events/dolphin-rise.png" alt="" />
+              <img className="real-dolphin dolphin-jump" src="/assets/events/dolphin-jump.png" alt="" />
+              <strong>FULL BODY!</strong>'''
+          new = '''              <div className="rainbow" />
+              <div className="dolphin-swarm" aria-hidden="true">
+                {Array.from({ length: 14 }).map((_, i) => (
+                  <span key={i} style={{ "--dolphin-index": i } as React.CSSProperties}>🐬</span>
+                ))}
+              </div>
+              <strong>FULL BODY!</strong>'''
+          if old not in text:
+              raise SystemExit('Expected Slice dolphin block was not found')
+          page.write_text(text.replace(old, new))
+
+          css = Path('app/globals.css')
+          styles = css.read_text()
+          styles += r'''
+
+/* Original Slice dolphin gag — deliberately absurd, now with more dolphins. */
+.dolphin-swarm {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+}
+.dolphin-swarm span {
+  --i: var(--dolphin-index);
+  position: absolute;
+  left: -18vw;
+  top: calc(7% + (var(--i) * 6.1%));
+  font-size: clamp(62px, 9vw, 145px);
+  line-height: 1;
+  filter: drop-shadow(0 10px 5px rgba(0,0,0,.34));
+  transform: rotate(calc(-18deg + (var(--i) * 3deg)));
+  animation: original-dolphin-gag 1.85s cubic-bezier(.2,.65,.3,1) both;
+  animation-delay: calc(var(--i) * 65ms);
+}
+.dolphin-swarm span:nth-child(3n) { font-size: clamp(48px, 7vw, 112px); }
+.dolphin-swarm span:nth-child(4n) { top: calc(72% - (var(--i) * 3.2%)); }
+.dolphin-swarm span:nth-child(even) { animation-duration: 2.05s; }
+.effect-slice > strong {
+  animation-delay: 1.05s;
+}
+@keyframes original-dolphin-gag {
+  0% {
+    left: -22vw;
+    opacity: 0;
+    transform: translateY(6vh) rotate(-20deg) scale(.72);
+  }
+  12% { opacity: 1; }
+  55% {
+    transform: translateY(-4vh) rotate(5deg) scale(1.06);
+  }
+  100% {
+    left: 112vw;
+    opacity: 1;
+    transform: translateY(2vh) rotate(18deg) scale(.88);
+  }
+}
+'''
+          css.write_text(styles)
+          PY
+      - run: npm ci
+      - run: npm run build
+      - name: Commit production rollback
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add app/page.tsx app/globals.css
+          git commit -m "Restore original dolphin gag with larger swarm"
+          git push
