@@ -16,8 +16,6 @@ main { overflow:hidden; background:var(--paper); background-image:radial-gradien
 .issue-burst { position:absolute;right:5%;top:6%;z-index:4;background:var(--gold);padding:30px 24px;text-align:center;border:6px solid #111;clip-path:polygon(50% 0,59% 15%,73% 5%,76% 22%,95% 18%,87% 37%,100% 50%,84% 59%,94% 78%,74% 78%,69% 97%,54% 85%,40% 100%,34% 82%,14% 91%,17% 69%,0 59%,15% 46%,3% 29%,24% 26%,25% 8%,42% 18%);transform:rotate(7deg);font-size:clamp(14px,1.4vw,22px);line-height:1.05;pointer-events:none; }
 .start-ribbon { position:absolute;bottom:4%;left:50%;transform:translateX(-50%) rotate(-1deg);z-index:8;background:var(--gold);color:#111;text-decoration:none;border:5px solid #111;box-shadow:7px 7px 0 var(--red);padding:16px 34px;font-size:22px;letter-spacing:.08em; }
 .chapter-art-link { position:absolute;top:0;bottom:0;width:20%;z-index:6;display:block;cursor:pointer;outline:0; }
-.chapter-art-link:hover { background:#f7b51e22;box-shadow:inset 0 0 0 5px var(--gold); }
-.chapter-art-link:focus-visible { box-shadow:inset 0 0 0 7px white,inset 0 0 0 12px var(--red); }
 .character-hit { position:absolute;z-index:4;border:0;background:transparent;bottom:4%;height:65%; }
 .slice-hit { left:29%;width:16%; }.dice-hit{left:47%;width:18%}.percy-hit{right:6%;width:20%}
 .character-hit:hover { filter:drop-shadow(0 0 18px #54c7ff); }
