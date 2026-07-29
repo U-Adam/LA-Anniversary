@@ -2,219 +2,148 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-type Choice = { name: string; price: number; url: string; image: string; note: string; group?: string };
+type Action = { label: string; url: string };
+type Choice = {
+  name: string;
+  price: number;
+  image: string;
+  note: string;
+  group?: string;
+  locked?: boolean;
+  actions: Action[];
+};
 
 const hotels: Choice[] = [
-  { name: "The Delphi", price: 210, url: "https://www.thedelphihotel.com/", image: "/assets/hotels/the-delphi.jpg", note: "Downtown drama · rooftop pool" },
-  { name: "The Biltmore", price: 185, url: "https://www.millenniumhotels.com/en/los-angeles/millennium-biltmore-hotel-los-angeles/", image: "/assets/hotels/the-biltmore.jpg", note: "Old-Hollywood grandeur" },
-  { name: "Hollywood Franklin", price: 150, url: "https://www.hilton.com/en/hotels/laxhfup-hilton-garden-inn-los-angeles-hollywood/", image: "/assets/hotels/hollywood-franklin.jpg", note: "Closest to the action" },
-  { name: "The LINE LA", price: 230, url: "https://www.thelinehotel.com/los-angeles/", image: "/assets/hotels/the-line-la.jpg", note: "Koreatown cool" },
-  { name: "Cara Hotel", price: 195, url: "https://www.carahotel.com/", image: "/assets/hotels/cara-hotel.jpg", note: "Courtyard romance" },
-  { name: "Los Angeles Athletic Club", price: 175, url: "https://www.laac.com/", image: "/assets/hotels/los-angeles-athletic-club.jpg", note: "Historic club hideout" },
+  { name: "The Delphi", price: 402, image: "/assets/hotels/the-delphi.jpg", note: "Two nights · Downtown Los Angeles", actions: [{ label: "BOOK", url: "https://www.thedelphihotel.com/" }] },
+  { name: "Millennium Biltmore Los Angeles", price: 441, image: "/assets/hotels/the-biltmore.jpg", note: "Two nights · Old-Hollywood grandeur", actions: [{ label: "BOOK", url: "https://www.millenniumhotels.com/en/los-angeles/millennium-biltmore-hotel-los-angeles/" }] },
+  { name: "Hollywood Franklin", price: 501, image: "/assets/hotels/hollywood-franklin.jpg", note: "Two nights · Hollywood basecamp", actions: [{ label: "BOOK", url: "https://www.thehollywoodfranklin.com/" }] },
+  { name: "The LINE LA", price: 507, image: "/assets/hotels/the-line-la.jpg", note: "Two nights · Koreatown cool", actions: [{ label: "BOOK", url: "https://www.thelinehotel.com/los-angeles/" }] },
+  { name: "Los Angeles Athletic Club", price: 615, image: "/assets/hotels/los-angeles-athletic-club.jpg", note: "Two nights · Historic club hideout", actions: [{ label: "BOOK", url: "https://www.laac.com/hotel/" }] },
+  { name: "Cara Hotel", price: 666, image: "/assets/hotels/cara-hotel.jpg", note: "Two nights · Courtyard romance", actions: [{ label: "BOOK", url: "https://www.carahotel.com/" }] },
 ];
 
-const universal: Choice[] = [
-  { name: "1 Day General", price: 120, url: "https://www.universalstudioshollywood.com/web/en/us/tickets-packages", image: "/assets/food/academy-museum.jpg", note: "The classic mission" },
-  { name: "Express Pass", price: 270, url: "https://www.universalstudioshollywood.com/web/en/us/tickets-packages", image: "/assets/food/firefly.jpg", note: "Skip the lines. Save the marriage." },
-  { name: "VIP Experience", price: 250, url: "https://www.universalstudioshollywood.com/web/en/us/vip-experience", image: "/assets/food/yamashiro-hollywood.jpg", note: "Behind the curtain" },
+const mainMissions: Choice[] = [
+  { name: "Universal Studios Hollywood: General Admission", price: 218, image: "/assets/reference/comic-cover.webp", note: "Two people · General admission", actions: [{ label: "TICKETS", url: "https://www.universalstudioshollywood.com/web/en/us/tickets-packages/general-admission-tickets" }] },
+  { name: "Universal Studios Hollywood: Universal Express", price: 378, image: "/assets/reference/comic-cover.webp", note: "Two people · Express access", actions: [{ label: "TICKETS", url: "https://www.universalstudioshollywood.com/web/en/us/tickets-packages/universal-express" }] },
+  { name: "The Odyssey in 70mm IMAX", price: 70, image: "/assets/reference/comic-cover.webp", note: "Two people · Already purchased", locked: true, actions: [{ label: "MOVIE", url: "https://www.theodysseymovie.com/" }] },
 ];
 
-const addons: Choice[] = [
-  { name: "Studio Tour", price: 80, url: "https://www.wbstudiotour.com/", image: "/assets/food/academy-museum.jpg", note: "Backlots & movie magic" },
-  { name: "Griffith Hike + Observatory", price: 45, url: "https://www.laparks.org/griffithpark/", image: "/assets/food/lacma.jpg", note: "Fern Dell → Observatory" },
-  { name: "Musée & Frank", price: 95, url: "https://www.academymuseum.org/", image: "/assets/food/musso-and-frank-grill.jpg", note: "Museum, then martinis" },
+const sideQuests: Choice[] = [
+  { name: "Academy Museum of Motion Pictures", price: 50, image: "/assets/food/academy-museum.jpg", note: "Two people", actions: [{ label: "TICKETS", url: "https://www.academymuseum.org/en/tickets" }] },
+  { name: "LACMA", price: 50, image: "/assets/food/lacma.jpg", note: "Two people", actions: [{ label: "TICKETS", url: "https://www.lacma.org/tickets" }] },
+  { name: "Griffith Observatory and Griffith Park Hike", price: 0, image: "/assets/food/lacma.jpg", note: "Free · Parking and transportation not included", actions: [{ label: "INFO", url: "https://griffithobservatory.org/explore/griffith-park/" }] },
 ];
 
 const dinners: Choice[] = [
-  { name: "Mother Wolf · Italian", price: 190, url: "https://www.motherwolfla.com/", image: "/assets/food/mother-wolf.jpg", note: "Roman firepower" },
-  { name: "Musso & Frank · Steak", price: 180, url: "https://mussoandfrank.com/", image: "/assets/food/musso-and-frank-grill.jpg", note: "The old-school heavyweight" },
-  { name: "Yamashiro · Sushi", price: 170, url: "https://yamashirohollywood.com/", image: "/assets/food/yamashiro-hollywood.jpg", note: "A view worthy of Issue #2" },
-  { name: "Kismet · Mediterranean", price: 125, url: "https://www.kismetla.com/", image: "/assets/food/kismet.jpg", note: "Bright, strange, excellent" },
-  { name: "Bacetti · Italian", price: 145, url: "https://www.bacetti.com/", image: "/assets/food/bacetti.jpg", note: "Echo Park romance" },
+  { name: "Mother Wolf", price: 220, image: "/assets/food/mother-wolf.jpg", note: "Estimated for two", actions: [{ label: "RESERVE", url: "https://motherwolfla.com/" }, { label: "MENU", url: "https://motherwolfla.com/" }] },
+  { name: "Cara Restaurant", price: 180, image: "/assets/food/cara.jpg", note: "Estimated for two", actions: [{ label: "RESERVE", url: "https://www.carahotel.com/cara-restaurant/" }, { label: "MENU", url: "https://www.carahotel.com/cara-restaurant/" }] },
+  { name: "Musso & Frank Grill", price: 190, image: "/assets/food/musso-and-frank-grill.jpg", note: "Estimated for two", actions: [{ label: "RESERVE", url: "https://mussoandfrank.com/" }, { label: "MENU", url: "https://mussoandfrank.com/menu/appetizers/" }] },
+  { name: "Yamashiro Hollywood", price: 190, image: "/assets/food/yamashiro-hollywood.jpg", note: "Estimated for two", actions: [{ label: "RESERVE", url: "https://yamashirohollywood.com/" }, { label: "MENU", url: "https://yamashirohollywood.com/" }] },
+  { name: "Firefly", price: 175, image: "/assets/food/firefly.jpg", note: "Estimated for two", actions: [{ label: "RESERVE", url: "https://www.fireflystudiocity.com/reservations" }, { label: "MENU", url: "https://www.fireflystudiocity.com/menu" }] },
+  { name: "Kismet", price: 150, image: "/assets/food/kismet.jpg", note: "Estimated for two", actions: [{ label: "RESERVE", url: "https://www.kismetla.com/resy" }, { label: "MENU", url: "https://www.kismetla.com/menu" }] },
 ];
 
 const percyPicks: Choice[] = [
-  { group: "COFFEE", name: "Go Get Em Tiger", price: 18, url: "https://gget.com/", image: "/assets/food/cara.jpg", note: "Caffeine side quest" },
-  { group: "COFFEE", name: "Maru Coffee", price: 18, url: "https://www.marucoffee.com/", image: "/assets/food/firefly.jpg", note: "Percy approves the foam" },
-  { group: "COFFEE", name: "Alfred Coffee", price: 20, url: "https://www.alfred.la/", image: "/assets/food/yamashiro-hollywood.jpg", note: "But first, obviously" },
-  { group: "LUNCH", name: "Fanny’s", price: 75, url: "https://www.fannysla.com/", image: "/assets/food/academy-museum.jpg", note: "Museum lunch with style" },
-  { group: "LUNCH", name: "Little Dom’s", price: 80, url: "https://www.littledoms.com/", image: "/assets/food/bacetti.jpg", note: "Los Feliz comfort" },
-  { group: "LUNCH", name: "Grand Central Market", price: 45, url: "https://grandcentralmarket.com/", image: "/assets/food/bowery-bungalow.jpg", note: "Choose your own delicious chaos" },
-  { group: "TREAT", name: "Voodoo Doughnut", price: 24, url: "https://www.universalstudioshollywood.com/web/en/us/things-to-do/dining/citywalk/voodoo-doughnut", image: "/assets/food/cara.jpg", note: "Sugar power-up" },
-  { group: "SNACK", name: "Tartine", price: 32, url: "https://tartinebakery.com/los-angeles", image: "/assets/food/kismet.jpg", note: "Pastry boss battle" },
-  { group: "DESSERT", name: "Rendezvous Court", price: 55, url: "https://www.millenniumhotels.com/en/los-angeles/millennium-biltmore-hotel-los-angeles/dining/rendezvous-court/", image: "/assets/food/mother-wolf.jpg", note: "Tea beneath painted ceilings" },
+  { group: "COFFEE", name: "Go Get Em Tiger", price: 30, image: "/assets/food/cara.jpg", note: "$30 for two", actions: [{ label: "LOCATIONS", url: "https://gget.com/pages/locations" }] },
+  { group: "COFFEE", name: "Maru Coffee", price: 30, image: "/assets/food/firefly.jpg", note: "$30 for two", actions: [{ label: "LOCATIONS", url: "https://www.marucoffee.com/pages/locations" }] },
+  { group: "COFFEE", name: "Alfred Coffee", price: 30, image: "/assets/food/yamashiro-hollywood.jpg", note: "$30 for two", actions: [{ label: "VISIT", url: "https://alfred.la/" }] },
+  { group: "SNACKS + PASTRIES", name: "Voodoo Doughnut at Universal CityWalk", price: 20, image: "/assets/food/cara.jpg", note: "$20 for two", actions: [{ label: "INFO", url: "https://www.universalstudioshollywood.com/web/en/us/things-to-do/dining/citywalk/voodoo-doughnut" }] },
+  { group: "SNACKS + PASTRIES", name: "Tartine", price: 30, image: "/assets/food/kismet.jpg", note: "$30 for two", actions: [{ label: "MENU", url: "https://tartinebakery.com/menus/" }] },
+  { group: "LUNCH + CASUAL", name: "Grand Central Market", price: 60, image: "/assets/food/bowery-bungalow.jpg", note: "$60 for two", actions: [{ label: "VISIT", url: "https://grandcentralmarket.com/visit-the-market/" }] },
+  { group: "LUNCH + CASUAL", name: "Fanny’s", price: 70, image: "/assets/food/academy-museum.jpg", note: "$70 for two", actions: [{ label: "RESERVE", url: "https://fannysla.com/reservations" }, { label: "MENU", url: "https://fannysla.com/menu-1" }] },
+  { group: "LUNCH + CASUAL", name: "Little Dom’s", price: 80, image: "/assets/food/bacetti.jpg", note: "$80 for two", actions: [{ label: "RESERVE", url: "https://www.littledoms.com/reserve" }, { label: "MENU", url: "https://www.littledoms.com/dinner-menu" }] },
+  { group: "LUNCH + CASUAL", name: "Rendezvous Court", price: 90, image: "/assets/food/mother-wolf.jpg", note: "$90 for two", actions: [{ label: "VISIT", url: "https://www.millenniumhotels.com/en/los-angeles/millennium-biltmore-hotel-los-angeles/rendezvous-court-cafe" }] },
 ];
 
-const quotes = [
-  "“You had me at hello.”",
-  "“To me, you are perfect.”",
-  "“As you wish.”",
-  "“I’m also just a girl, standing in front of a boy…”",
-  "“You make me want to be a better man.”",
-];
+const quotes = ["“You had me at hello.”", "“To me, you are perfect.”", "“As you wish.”", "“You make me want to be a better man.”"];
 
 function PlaceImage({ item }: { item: Choice }) {
-  return (
-    <div className="card-image">
-      <img
-        src={item.image}
-        alt={item.name}
-        loading="eager"
-        onError={(event) => {
-          event.currentTarget.onerror = null;
-          event.currentTarget.src = "/assets/reference/comic-cover.webp";
-        }}
-      />
-      {item.group && <span className="pick-group">{item.group}</span>}
-    </div>
-  );
+  return <div className="card-image"><img src={item.image} alt={item.name} loading="eager" onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = "/assets/reference/comic-cover.webp"; }} />{item.group && <span className="pick-group">{item.group}</span>}</div>;
 }
 
-function ChoiceCard({ item, selected, onSelect }: { item: Choice; selected: boolean; onSelect: () => void }) {
-  return (
-    <article className={`mission-card ${selected ? "selected" : ""}`}>
-      <PlaceImage item={item} />
-      <div className="card-copy">
-        <div>
-          <h3>{item.name}</h3>
-          <p>{item.note}</p>
-          <a className="place-link" href={item.url} target="_blank" rel="noreferrer">DETAILS ↗</a>
-        </div>
-        <button className="check" onClick={onSelect} aria-pressed={selected}><span>{selected ? "✓" : ""}</span>${item.price}</button>
-      </div>
-    </article>
-  );
+function ChoiceCard({ item, selected, onSelect }: { item: Choice; selected: boolean; onSelect?: () => void }) {
+  return <article className={`mission-card ${selected ? "selected" : ""} ${item.locked ? "locked" : ""}`}>
+    <PlaceImage item={item} />
+    <div className="card-copy">
+      <div className="card-info"><h3>{item.name}</h3><p>{item.note}</p><div className="card-actions">{item.actions.map((a) => <a key={a.label} href={a.url} target="_blank" rel="noreferrer">{a.label} ↗</a>)}</div></div>
+      {item.locked ? <div className="purchased"><span>✓</span>PURCHASED<br /><b>${item.price}</b></div> : <button className="choose-control" onClick={onSelect} aria-pressed={selected}><span>{selected ? "✓" : ""}</span><em>CHOOSE</em><b>${item.price}</b></button>}
+    </div>
+  </article>;
 }
 
 export default function Home() {
   const [hotel, setHotel] = useState<number | null>(null);
-  const [uni, setUni] = useState<number | null>(null);
-  const [addOn, setAddOn] = useState<number[]>([]);
+  const [mission, setMission] = useState<number | null>(null);
+  const [quests, setQuests] = useState<number[]>([]);
   const [dinner, setDinner] = useState<number | null>(null);
   const [picks, setPicks] = useState<number[]>([]);
   const [taxes, setTaxes] = useState(true);
   const [effect, setEffect] = useState<"slice" | "dice" | "percy" | null>(null);
-  const movie = 70;
 
   useEffect(() => {
     const saved = localStorage.getItem("slice-dice-percy-plan");
     if (!saved) return;
-    try {
-      const s = JSON.parse(saved);
-      setHotel(s.hotel ?? null);
-      setUni(s.uni ?? null);
-      setAddOn(s.addOn ?? []);
-      setDinner(s.dinner ?? null);
-      setPicks(s.picks ?? []);
-      setTaxes(s.taxes ?? true);
-    } catch {}
+    try { const s = JSON.parse(saved); setHotel(s.hotel ?? null); setMission(s.mission ?? null); setQuests(s.quests ?? []); setDinner(s.dinner ?? null); setPicks(s.picks ?? []); setTaxes(s.taxes ?? true); } catch {}
   }, []);
-
-  useEffect(() => {
-    if (!effect) return;
-    const timer = setTimeout(() => setEffect(null), effect === "percy" ? 1100 : 2400);
-    return () => clearTimeout(timer);
-  }, [effect]);
+  useEffect(() => { if (!effect) return; const timer = setTimeout(() => setEffect(null), effect === "percy" ? 1100 : 2400); return () => clearTimeout(timer); }, [effect]);
 
   const subtotal = useMemo(() =>
     (hotel === null ? 0 : hotels[hotel].price) +
-    (uni === null ? 0 : universal[uni].price) + movie +
-    addOn.reduce((sum, i) => sum + addons[i].price, 0) +
+    (mission === null ? 0 : mainMissions[mission].price) + 70 +
+    quests.reduce((s, i) => s + sideQuests[i].price, 0) +
     (dinner === null ? 0 : dinners[dinner].price) +
-    picks.reduce((sum, i) => sum + percyPicks[i].price, 0),
-  [hotel, uni, addOn, dinner, picks]);
+    picks.reduce((s, i) => s + percyPicks[i].price, 0),
+  [hotel, mission, quests, dinner, picks]);
   const tax = taxes ? Math.round(subtotal * .095) : 0;
   const total = subtotal + tax;
-
-  const save = () => {
-    localStorage.setItem("slice-dice-percy-plan", JSON.stringify({ hotel, uni, addOn, dinner, picks, taxes }));
-    alert("MISSION SAVED!");
-  };
-  const reset = () => {
-    setHotel(null); setUni(null); setAddOn([]); setDinner(null); setPicks([]);
-    localStorage.removeItem("slice-dice-percy-plan");
-  };
+  const save = () => { localStorage.setItem("slice-dice-percy-plan", JSON.stringify({ hotel, mission, quests, dinner, picks, taxes })); alert("MISSION SAVED!"); };
+  const reset = () => { setHotel(null); setMission(null); setQuests([]); setDinner(null); setPicks([]); localStorage.removeItem("slice-dice-percy-plan"); };
   const summary = [
     "SLICE, DICE & PERCY — LA ANNIVERSARY MISSION",
     hotel === null ? "Hotel: TBD" : `Hotel: ${hotels[hotel].name} — $${hotels[hotel].price}`,
-    uni === null ? "Universal: TBD" : `Universal: ${universal[uni].name} — $${universal[uni].price}`,
-    `The Odyssey · 70mm IMAX — $${movie}`,
-    `Add-ons: ${addOn.length ? addOn.map(i => addons[i].name).join(", ") : "None"}`,
+    mission === null ? "Universal: TBD" : `Universal: ${mainMissions[mission].name} — $${mainMissions[mission].price}`,
+    "The Odyssey in 70mm IMAX — $70 — purchased",
+    `Side quests: ${quests.length ? quests.map(i => sideQuests[i].name).join(", ") : "None"}`,
     `Dinner: ${dinner === null ? "TBD" : dinners[dinner].name}`,
     `Percy’s Picks: ${picks.length ? picks.map(i => percyPicks[i].name).join(", ") : "None"}`,
     `Estimated total: $${total}`,
   ].join("\n");
   const mail = `mailto:?subject=${encodeURIComponent("Our LA Anniversary Mission")}&body=${encodeURIComponent(summary)}`;
 
-  return (
-    <main>
-      <section className="cover" id="top">
-        <img src="/assets/reference/comic-cover.webp" alt="Five illustrated chapter panels for the Los Angeles anniversary adventure" />
-        <div className="cover-shade" />
-        <div className="issue-burst">SPECIAL<br />2ND ANNIVERSARY<br />EDITION!</div>
-        <div className="cover-title"><small>LOS ANGELES PRESENTS</small><h1>SLICE, DICE<br /><em>&amp; PERCY</em></h1><p>THE ANNIVERSARY ADVENTURE</p></div>
-        <a className="chapter-art-link" style={{ left: "0%" }} href="#chapter-1" aria-label="Open Chapter 1: Secret Lairs" />
-        <a className="chapter-art-link" style={{ left: "20%" }} href="#chapter-2" aria-label="Open Chapter 2: Main Missions" />
-        <a className="chapter-art-link" style={{ left: "40%" }} href="#chapter-3" aria-label="Open Chapter 3: Side Quests" />
-        <a className="chapter-art-link" style={{ left: "60%" }} href="#chapter-4" aria-label="Open Chapter 4: Dinner Duel" />
-        <a className="chapter-art-link" style={{ left: "80%" }} href="#chapter-5" aria-label="Open Chapter 5: Percy’s Picks" />
-        <a className="start-ribbon" href="#chapter-1">OPEN THE ISSUE ↓</a>
-      </section>
+  return <main>
+    <section className="cover" id="top">
+      <img src="/assets/reference/comic-cover.webp" alt="Five illustrated chapter panels for the Los Angeles anniversary adventure" />
+      <div className="cover-shade" />
+      {["chapter-1", "chapter-2", "chapter-3", "chapter-4", "chapter-5"].map((id, i) => <a key={id} className="chapter-art-link" href={`#${id}`} style={{ left: `${i * 20}%` }} aria-label={`Jump to chapter ${i + 1}`} />)}
+      <a className="start-ribbon" href="#chapter-1">OPEN THE ISSUE ↓</a>
+    </section>
 
-      {effect && <div className={`effect effect-${effect}`} onClick={() => setEffect(null)}>
-        {effect === "slice" && <><div className="rainbow" />{Array.from({ length: 14 }).map((_, i) => <div className={`dolphin d${i % 2 + 1}`} key={i} style={{ animationDelay: `${i * .08}s`, top: `${5 + (i % 6) * 14}%` }}>🐬</div>)}<strong>FULL BODY!</strong></>}
-        {effect === "dice" && <><div className="dice-storm">{Array.from({ length: 18 }).map((_, i) => <i key={i}>⚄</i>)}</div><strong>{quotes[Math.floor(Math.random() * quotes.length)]}</strong></>}
-        {effect === "percy" && <><strong>THINK FAST!</strong><div className="percy-charge">🧸</div><b>WHUMP!</b></>}
-      </div>}
+    {effect && <div className={`effect effect-${effect}`} onClick={() => setEffect(null)}>
+      {effect === "slice" && <><div className="rainbow" />{Array.from({ length: 14 }).map((_, i) => <div className={`dolphin d${i % 2 + 1}`} key={i} style={{ animationDelay: `${i * .08}s`, top: `${5 + (i % 6) * 14}%` }}>🐬</div>)}<strong>FULL BODY!</strong></>}
+      {effect === "dice" && <><div className="dice-storm">{Array.from({ length: 18 }).map((_, i) => <i key={i}>⚄</i>)}</div><strong>{quotes[Math.floor(Math.random() * quotes.length)]}</strong></>}
+      {effect === "percy" && <><strong>THINK FAST!</strong><div className="percy-charge">🧸</div><b>WHUMP!</b></>}
+    </div>}
 
-      <div className="story-shell">
-        <section className="chapter" id="chapter-1">
-          <header><a href="#chapter-1" style={{ display: "flex", alignItems: "center", background: "#f7b51e", padding: "18px 24px", borderRight: "7px solid #16110e", color: "inherit", textDecoration: "none", whiteSpace: "nowrap" }}>CHAPTER 1</a><div><p>SECRET LAIRS</p><h2>WHERE SHALL OUR HEROES REST?</h2></div></header>
-          <div className="card-grid">{hotels.map((x, i) => <ChoiceCard key={x.name} item={x} selected={hotel === i} onSelect={() => setHotel(hotel === i ? null : i)} />)}</div>
-        </section>
+    <div className="story-shell">
+      <section className="chapter" id="chapter-1"><header><div><p>CHAPTER 1 · HOTELS — TWO NIGHTS</p><h2>SECRET LAIRS</h2></div></header><div className="card-grid">{hotels.map((x, i) => <ChoiceCard key={x.name} item={x} selected={hotel === i} onSelect={() => setHotel(hotel === i ? null : i)} />)}</div></section>
+      <section className="chapter chapter-red" id="chapter-2"><header><div><p>CHAPTER 2 · TWO PEOPLE</p><h2>MAIN MISSIONS</h2></div></header><div className="card-grid">{mainMissions.map((x, i) => <ChoiceCard key={x.name} item={x} selected={x.locked || mission === i} onSelect={() => !x.locked && setMission(mission === i ? null : i)} />)}</div></section>
+      <section className="chapter" id="chapter-3"><header><div><p>CHAPTER 3 · TWO PEOPLE</p><h2>SIDE QUESTS</h2></div></header><div className="card-grid three">{sideQuests.map((x, i) => <ChoiceCard key={x.name} item={x} selected={quests.includes(i)} onSelect={() => setQuests(quests.includes(i) ? quests.filter(n => n !== i) : [...quests, i])} />)}</div></section>
+      <section className="chapter chapter-red" id="chapter-4"><header><div><p>CHAPTER 4 · ESTIMATED FOR TWO</p><h2>DINNER DUEL</h2></div></header><div className="card-grid">{dinners.map((x, i) => <ChoiceCard key={x.name} item={x} selected={dinner === i} onSelect={() => setDinner(dinner === i ? null : i)} />)}</div></section>
+      <section className="chapter" id="chapter-5"><header><div><p>CHAPTER 5 · COFFEE · SNACKS · PASTRIES · LUNCH</p><h2>PERCY’S PICKS</h2></div></header><div className="percy-callout"><div className="percy-portrait" role="img" aria-label="Percy" /><p>He has no money. He has no driver’s license. He has <b>excellent snack instincts.</b></p></div><div className="card-grid">{percyPicks.map((x, i) => <ChoiceCard key={x.name} item={x} selected={picks.includes(i)} onSelect={() => setPicks(picks.includes(i) ? picks.filter(n => n !== i) : [...picks, i])} />)}</div></section>
 
-        <section className="chapter chapter-red" id="chapter-2">
-          <header><a href="#chapter-2" style={{ display: "flex", alignItems: "center", background: "#d8332a", color: "white", padding: "18px 24px", borderRight: "7px solid #16110e", textDecoration: "none", whiteSpace: "nowrap" }}>CHAPTER 2</a><div><p>MAIN MISSIONS</p><h2>THE BIG ONES. NO SKIPPING.</h2></div></header>
-          <div className="mission-splash"><div><b>FRIDAY · AUG 7</b><h3>UNIVERSAL<br />STUDIOS</h3><p>Choose your power level.</p></div><div className="uni-options">{universal.map((x, i) => <button key={x.name} onClick={() => setUni(uni === i ? null : i)} className={uni === i ? "active" : ""}><span>{uni === i ? "✓" : ""}</span><b>{x.name}</b><em>${x.price}</em></button>)}</div></div>
-          <div className="odyssey-panel"><div className="odyssey-art">70<span>MM</span></div><div><b>SATURDAY · AUG 8 · 2:50 PM</b><h3>THE ODYSSEY</h3><p>70mm IMAX · TCL Chinese Theatre</p><a href="https://www.tclchinesetheatres.com/" target="_blank" rel="noreferrer">MISSION LOCKED · $70 ↗</a></div></div>
-        </section>
-
-        <section className="chapter" id="chapter-3">
-          <header><a href="#chapter-3" style={{ display: "flex", alignItems: "center", background: "#f7b51e", padding: "18px 24px", borderRight: "7px solid #16110e", color: "inherit", textDecoration: "none", whiteSpace: "nowrap" }}>CHAPTER 3</a><div><p>SIDE QUESTS</p><h2>HOW DEEP DOES THE SIDE QUEST GO?</h2></div></header>
-          <div className="card-grid three">{addons.map((x, i) => <ChoiceCard key={x.name} item={x} selected={addOn.includes(i)} onSelect={() => setAddOn(addOn.includes(i) ? addOn.filter(n => n !== i) : [...addOn, i])} />)}</div>
-        </section>
-
-        <section className="chapter chapter-red" id="chapter-4">
-          <header><a href="#chapter-4" style={{ display: "flex", alignItems: "center", background: "#d8332a", color: "white", padding: "18px 24px", borderRight: "7px solid #16110e", textDecoration: "none", whiteSpace: "nowrap" }}>CHAPTER 4</a><div><p>DINNER DUEL</p><h2>TONIGHT’S BATTLE. YOU DECIDE.</h2></div></header>
-          <div className="card-grid">{dinners.map((x, i) => <ChoiceCard key={x.name} item={x} selected={dinner === i} onSelect={() => setDinner(dinner === i ? null : i)} />)}</div>
-        </section>
-
-        <section className="chapter" id="chapter-5">
-          <header><a href="#chapter-5" style={{ display: "flex", alignItems: "center", background: "#f7b51e", padding: "18px 24px", borderRight: "7px solid #16110e", color: "inherit", textDecoration: "none", whiteSpace: "nowrap" }}>CHAPTER 5</a><div><p>TREATS · COFFEE · SNACKS · LUNCH</p><h2>PERCY’S PICKS</h2></div></header>
-          <div className="percy-callout"><div className="percy-portrait" role="img" aria-label="Percy" /><p>He has no money. He has no driver’s license. He has <b>excellent snack instincts.</b></p></div>
-          <div className="card-grid">{percyPicks.map((x, i) => <ChoiceCard key={x.name} item={x} selected={picks.includes(i)} onSelect={() => setPicks(picks.includes(i) ? picks.filter(n => n !== i) : [...picks, i])} />)}</div>
-        </section>
-
-        <section className="mission-board" id="mission-board">
-          <div className="board-title"><span>FINAL CHAPTER</span><h2>MISSION BOARD</h2><p>YOUR ADVENTURE, ASSEMBLED.</p></div>
-          <div className="ledger">
-            <Line label="Hotel" value={hotel === null ? "CHOOSE A LAIR" : `${hotels[hotel].name} · $${hotels[hotel].price}`} />
-            <Line label="Universal" value={uni === null ? "CHOOSE TICKETS" : `${universal[uni].name} · $${universal[uni].price}`} />
-            <Line label="Odyssey" value={`70mm IMAX · $${movie}`} />
-            <Line label="Add-ons" value={addOn.length ? `${addOn.map(i => addons[i].name).join(" + ")} · $${addOn.reduce((s, i) => s + addons[i].price, 0)}` : "NONE YET"} />
-            <Line label="Dinner" value={dinner === null ? "THE DUEL AWAITS" : `${dinners[dinner].name} · $${dinners[dinner].price}`} />
-            <Line label="Percy’s Picks" value={picks.length ? `${picks.length} SELECTED · $${picks.reduce((s, i) => s + percyPicks[i].price, 0)}` : "THE BEAR AWAITS"} />
-            <label className="tax-line"><input type="checkbox" checked={taxes} onChange={e => setTaxes(e.target.checked)} /><span>Estimate taxes &amp; fees</span><b>${tax}</b></label>
-            <div className="total"><span>RUNNING TOTAL</span><strong>${total}</strong></div>
-            <div className="board-actions"><button onClick={save}>SAVE ITINERARY</button><a href={mail}>EMAIL ITINERARY</a><button onClick={reset} className="danger">RESET</button></div>
-          </div>
-        </section>
-      </div>
-      <footer><div>SLICE ★ DICE ★ PERCY</div><p>LOS ANGELES · ISSUE #2 · LOVE, LAUGHTER &amp; EXTREMELY QUESTIONABLE PLANNING</p><a href="#top">BACK TO COVER ↑</a></footer>
-    </main>
-  );
+      <section className="mission-board" id="mission-board"><div className="board-title"><span>FINAL CHAPTER</span><h2>MISSION BOARD</h2><p>YOUR ADVENTURE, ASSEMBLED.</p></div><div className="ledger">
+        <Line label="Hotel" value={hotel === null ? "CHOOSE A LAIR" : `${hotels[hotel].name} · $${hotels[hotel].price}`} />
+        <Line label="Universal" value={mission === null ? "CHOOSE TICKETS" : `${mainMissions[mission].name} · $${mainMissions[mission].price}`} />
+        <Line label="Odyssey" value="70mm IMAX · $70 · PURCHASED" />
+        <Line label="Side quests" value={quests.length ? `${quests.map(i => sideQuests[i].name).join(" + ")} · $${quests.reduce((s, i) => s + sideQuests[i].price, 0)}` : "NONE YET"} />
+        <Line label="Dinner" value={dinner === null ? "THE DUEL AWAITS" : `${dinners[dinner].name} · $${dinners[dinner].price}`} />
+        <Line label="Percy’s Picks" value={picks.length ? `${picks.length} SELECTED · $${picks.reduce((s, i) => s + percyPicks[i].price, 0)}` : "THE BEAR AWAITS"} />
+        <label className="tax-line"><input type="checkbox" checked={taxes} onChange={e => setTaxes(e.target.checked)} /><span>Estimate taxes &amp; fees</span><b>${tax}</b></label>
+        <div className="total"><span>RUNNING TOTAL</span><strong>${total}</strong></div><div className="board-actions"><button onClick={save}>SAVE ITINERARY</button><a href={mail}>EMAIL ITINERARY</a><button onClick={reset} className="danger">RESET</button></div>
+      </div></section>
+    </div>
+    <footer><div>SLICE ★ DICE ★ PERCY</div><p>LOS ANGELES · ISSUE #2 · LOVE, LAUGHTER &amp; EXTREMELY QUESTIONABLE PLANNING</p><a href="#top">BACK TO COVER ↑</a></footer>
+  </main>;
 }
 
-function Line({ label, value }: { label: string; value: string }) {
-  return <div className="line"><span>{label}</span><b>{value}</b></div>;
-}
+function Line({ label, value }: { label: string; value: string }) { return <div className="line"><span>{label}</span><b>{value}</b></div>; }
