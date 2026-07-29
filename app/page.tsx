@@ -112,8 +112,12 @@ export default function Home() {
 
   return <main>
     <section className="cover" id="top">
-      <img src="/assets/reference/comic-cover.webp" alt="Five illustrated chapter panels for the Los Angeles anniversary adventure" />
+      <img src="/assets/reference/comic-cover.webp" alt="Slice, Dice and Percy with five illustrated chapter panels" />
       <div className="cover-shade" />
+      <div className="cover-title"><small>LOS ANGELES PRESENTS</small><h1>SLICE, DICE<br /><em>&amp; PERCY</em></h1><p>THE ANNIVERSARY ADVENTURE</p></div>
+      <button className="character-hit slice-hit" onClick={() => setEffect("slice")} aria-label="Animate Slice" />
+      <button className="character-hit dice-hit" onClick={() => setEffect("dice")} aria-label="Animate Dice" />
+      <button className="character-hit percy-hit" onClick={() => setEffect("percy")} aria-label="Animate Percy" />
       {["chapter-1", "chapter-2", "chapter-3", "chapter-4", "chapter-5"].map((id, i) => <a key={id} className="chapter-art-link" href={`#${id}`} style={{ left: `${i * 20}%` }} aria-label={`Jump to chapter ${i + 1}`} />)}
       <a className="start-ribbon" href="#chapter-1">OPEN THE ISSUE ↓</a>
     </section>
