@@ -13,15 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Starter Project",
-  description: "A clean starting point for building your site.",
-  other: {
-    "codex-preview": "development",
-  },
-  icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
-  },
+  title: "Slice, Dice & Percy — The Anniversary Adventure",
+  description: "An interactive comic-book itinerary for a Los Angeles anniversary adventure.",
 };
 
 export default function RootLayout({
