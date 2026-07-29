@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-type Choice = { name: string; price: number; url: string; image: string; note: string };
+type Choice = { name: string; price: number; url: string; image: string; note: string; group?: string };
 
 const hotels: Choice[] = [
   { name: "The Delphi", price: 210, url: "https://www.thedelphihotel.com/", image: "/assets/hotels/the-delphi.jpg", note: "Downtown drama · rooftop pool" },
@@ -33,6 +33,18 @@ const dinners: Choice[] = [
   { name: "Bacetti · Italian", price: 145, url: "https://www.bacetti.com/", image: "/assets/food/bacetti.jpg", note: "Echo Park romance" },
 ];
 
+const percyPicks: Choice[] = [
+  { group: "COFFEE", name: "Go Get Em Tiger", price: 18, url: "https://gget.com/", image: "/assets/food/cara.jpg", note: "Caffeine side quest" },
+  { group: "COFFEE", name: "Maru Coffee", price: 18, url: "https://www.marucoffee.com/", image: "/assets/food/firefly.jpg", note: "Percy approves the foam" },
+  { group: "COFFEE", name: "Alfred Coffee", price: 20, url: "https://www.alfred.la/", image: "/assets/food/yamashiro-hollywood.jpg", note: "But first, obviously" },
+  { group: "LUNCH", name: "Fanny’s", price: 75, url: "https://www.fannysla.com/", image: "/assets/food/academy-museum.jpg", note: "Museum lunch with style" },
+  { group: "LUNCH", name: "Little Dom’s", price: 80, url: "https://www.littledoms.com/", image: "/assets/food/bacetti.jpg", note: "Los Feliz comfort" },
+  { group: "LUNCH", name: "Grand Central Market", price: 45, url: "https://grandcentralmarket.com/", image: "/assets/food/bowery-bungalow.jpg", note: "Choose your own delicious chaos" },
+  { group: "TREAT", name: "Voodoo Doughnut", price: 24, url: "https://www.universalstudioshollywood.com/web/en/us/things-to-do/dining/citywalk/voodoo-doughnut", image: "/assets/food/cara.jpg", note: "Sugar power-up" },
+  { group: "SNACK", name: "Tartine", price: 32, url: "https://tartinebakery.com/los-angeles", image: "/assets/food/kismet.jpg", note: "Pastry boss battle" },
+  { group: "DESSERT", name: "Rendezvous Court", price: 55, url: "https://www.millenniumhotels.com/en/los-angeles/millennium-biltmore-hotel-los-angeles/dining/rendezvous-court/", image: "/assets/food/mother-wolf.jpg", note: "Tea beneath painted ceilings" },
+];
+
 const quotes = [
   "“You had me at hello.”",
   "“To me, you are perfect.”",
@@ -50,14 +62,33 @@ const chapterLinks = [
   ["mission-board", "Final · Mission Board"],
 ];
 
+function PlaceImage({ item }: { item: Choice }) {
+  return (
+    <div className="card-image">
+      <img
+        src={item.image}
+        alt={item.name}
+        loading="eager"
+        onError={(event) => {
+          event.currentTarget.onerror = null;
+          event.currentTarget.src = "/assets/reference/comic-cover.webp";
+        }}
+      />
+      {item.group && <span className="pick-group">{item.group}</span>}
+    </div>
+  );
+}
+
 function ChoiceCard({ item, selected, onSelect }: { item: Choice; selected: boolean; onSelect: () => void }) {
   return (
     <article className={`mission-card ${selected ? "selected" : ""}`}>
-      <a href={item.url} target="_blank" rel="noreferrer" className="card-image" style={{ backgroundImage: `url("${item.image}")` }} aria-label={`Open official website for ${item.name}`}>
-        <span className="official">OFFICIAL SITE ↗</span>
-      </a>
+      <PlaceImage item={item} />
       <div className="card-copy">
-        <div><h3>{item.name}</h3><p>{item.note}</p></div>
+        <div>
+          <h3>{item.name}</h3>
+          <p>{item.note}</p>
+          <a className="place-link" href={item.url} target="_blank" rel="noreferrer">DETAILS ↗</a>
+        </div>
         <button className="check" onClick={onSelect} aria-pressed={selected}><span>{selected ? "✓" : ""}</span>${item.price}</button>
       </div>
     </article>
@@ -69,6 +100,7 @@ export default function Home() {
   const [uni, setUni] = useState<number | null>(null);
   const [addOn, setAddOn] = useState<number[]>([]);
   const [dinner, setDinner] = useState<number | null>(null);
+  const [picks, setPicks] = useState<number[]>([]);
   const [taxes, setTaxes] = useState(true);
   const [effect, setEffect] = useState<"slice" | "dice" | "percy" | null>(null);
   const movie = 70;
@@ -82,6 +114,7 @@ export default function Home() {
       setUni(s.uni ?? null);
       setAddOn(s.addOn ?? []);
       setDinner(s.dinner ?? null);
+      setPicks(s.picks ?? []);
       setTaxes(s.taxes ?? true);
     } catch {}
   }, []);
@@ -96,17 +129,18 @@ export default function Home() {
     (hotel === null ? 0 : hotels[hotel].price) +
     (uni === null ? 0 : universal[uni].price) + movie +
     addOn.reduce((sum, i) => sum + addons[i].price, 0) +
-    (dinner === null ? 0 : dinners[dinner].price),
-  [hotel, uni, addOn, dinner]);
+    (dinner === null ? 0 : dinners[dinner].price) +
+    picks.reduce((sum, i) => sum + percyPicks[i].price, 0),
+  [hotel, uni, addOn, dinner, picks]);
   const tax = taxes ? Math.round(subtotal * .095) : 0;
   const total = subtotal + tax;
 
   const save = () => {
-    localStorage.setItem("slice-dice-percy-plan", JSON.stringify({ hotel, uni, addOn, dinner, taxes }));
+    localStorage.setItem("slice-dice-percy-plan", JSON.stringify({ hotel, uni, addOn, dinner, picks, taxes }));
     alert("MISSION SAVED!");
   };
   const reset = () => {
-    setHotel(null); setUni(null); setAddOn([]); setDinner(null);
+    setHotel(null); setUni(null); setAddOn([]); setDinner(null); setPicks([]);
     localStorage.removeItem("slice-dice-percy-plan");
   };
   const summary = [
@@ -116,6 +150,7 @@ export default function Home() {
     `The Odyssey · 70mm IMAX — $${movie}`,
     `Add-ons: ${addOn.length ? addOn.map(i => addons[i].name).join(", ") : "None"}`,
     `Dinner: ${dinner === null ? "TBD" : dinners[dinner].name}`,
+    `Percy’s Picks: ${picks.length ? picks.map(i => percyPicks[i].name).join(", ") : "None"}`,
     `Estimated total: $${total}`,
   ].join("\n");
   const mail = `mailto:?subject=${encodeURIComponent("Our LA Anniversary Mission")}&body=${encodeURIComponent(summary)}`;
@@ -166,8 +201,9 @@ export default function Home() {
         </section>
 
         <section className="chapter" id="chapter-5">
-          <header style={{ marginBottom: 0 }}><a href="#chapter-5" style={{ display: "flex", alignItems: "center", background: "#f7b51e", padding: "18px 24px", borderRight: "7px solid #16110e", color: "inherit", textDecoration: "none", whiteSpace: "nowrap" }}>CHAPTER 5</a><div><h2>PERCY’S PICKS</h2></div></header>
-          <div role="img" aria-label="Percy" style={{ minHeight: 520, border: "7px solid #16110e", borderTop: 0, boxShadow: "10px 10px 0 #d8332a", backgroundImage: "url('/assets/reference/comic-cover.webp')", backgroundSize: "cover", backgroundPosition: "84% 55%" }} />
+          <header><a href="#chapter-5" style={{ display: "flex", alignItems: "center", background: "#f7b51e", padding: "18px 24px", borderRight: "7px solid #16110e", color: "inherit", textDecoration: "none", whiteSpace: "nowrap" }}>CHAPTER 5</a><div><p>TREATS · COFFEE · SNACKS · LUNCH</p><h2>PERCY’S PICKS</h2></div></header>
+          <div className="percy-callout"><div className="percy-portrait" role="img" aria-label="Percy" /><p>He has no money. He has no driver’s license. He has <b>excellent snack instincts.</b></p></div>
+          <div className="card-grid">{percyPicks.map((x, i) => <ChoiceCard key={x.name} item={x} selected={picks.includes(i)} onSelect={() => setPicks(picks.includes(i) ? picks.filter(n => n !== i) : [...picks, i])} />)}</div>
         </section>
 
         <section className="mission-board" id="mission-board">
@@ -178,6 +214,7 @@ export default function Home() {
             <Line label="Odyssey" value={`70mm IMAX · $${movie}`} />
             <Line label="Add-ons" value={addOn.length ? `${addOn.map(i => addons[i].name).join(" + ")} · $${addOn.reduce((s, i) => s + addons[i].price, 0)}` : "NONE YET"} />
             <Line label="Dinner" value={dinner === null ? "THE DUEL AWAITS" : `${dinners[dinner].name} · $${dinners[dinner].price}`} />
+            <Line label="Percy’s Picks" value={picks.length ? `${picks.length} SELECTED · $${picks.reduce((s, i) => s + percyPicks[i].price, 0)}` : "THE BEAR AWAITS"} />
             <label className="tax-line"><input type="checkbox" checked={taxes} onChange={e => setTaxes(e.target.checked)} /><span>Estimate taxes &amp; fees</span><b>${tax}</b></label>
             <div className="total"><span>RUNNING TOTAL</span><strong>${total}</strong></div>
             <div className="board-actions"><button onClick={save}>SAVE ITINERARY</button><a href={mail}>EMAIL ITINERARY</a><button onClick={reset} className="danger">RESET</button></div>
