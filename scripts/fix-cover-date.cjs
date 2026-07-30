@@ -4,56 +4,52 @@ const pagePath = "app/page.tsx";
 const cssPath = "app/globals.css";
 
 let page = fs.readFileSync(pagePath, "utf8");
-page = page.replace("AUG 8TH, 2026", "AUG 8, 2026");
-page = page.replace(
-  'aria-label="Anniversary date August 8th, 2026"',
-  'aria-label="Anniversary date August 8, 2026"',
-);
+page = page
+  .replaceAll("AUG 8TH, 2026", "AUG 8, 2026")
+  .replaceAll("August 8th, 2026", "August 8, 2026");
 fs.writeFileSync(pagePath, page);
 
 let css = fs.readFileSync(cssPath, "utf8");
-css = css.replace(
-  `.cover-date-stamp {
-  position: absolute;
-  z-index: 8;
-  top: 8.35vw;
-  right: 1.15vw;
-  width: 8.45vw;
-  padding: 0.28vw 0.1vw;
-  background: #f1dfb4;
-  border-top: 2px solid #111;
-  border-bottom: 2px solid #111;
-  color: #111;
-  text-align: center;
-  font: 900 clamp(4px, 0.85vw, 12px) / 1 Impact, Haettenschweiler,
-    "Arial Narrow Bold", sans-serif;
-  letter-spacing: 0.015em;
-  white-space: nowrap;
-  transform: rotate(0.5deg);
-  pointer-events: none;
-}`,
-  `.cover-date-stamp {
-  position: absolute;
-  z-index: 8;
-  top: 8.05vw;
-  right: 0.72vw;
-  width: 9.35vw;
-  min-height: 1.75vw;
+const marker = "/* canonical-cover-date-fix */";
+const override = `
+
+${marker}
+/* Fully masks the date printed in the source cover art. */
+.cover-date-stamp {
+  top: 7.72vw;
+  right: 0.34vw;
+  width: 10.35vw;
+  min-height: 2.2vw;
   display: grid;
   place-items: center;
-  padding: 0.34vw 0.18vw 0.28vw;
+  padding: 0.42vw 0.28vw 0.32vw;
   background: #f1dfb4;
-  box-shadow: 0 0 0 0.22vw #f1dfb4;
-  border-top: 2px solid #111;
-  border-bottom: 2px solid #111;
+  border: 0;
+  box-shadow: 0 0 0 0.34vw #f1dfb4;
   color: #111;
-  text-align: center;
-  font: 900 clamp(5px, 0.88vw, 13px) / 1 Impact, Haettenschweiler,
+  font: 900 clamp(6px, 0.9vw, 14px) / 1 Impact, Haettenschweiler,
     "Arial Narrow Bold", sans-serif;
   letter-spacing: 0.01em;
   white-space: nowrap;
   transform: rotate(0.5deg);
-  pointer-events: none;
-}`,
-);
+}
+
+@media (max-width: 760px) {
+  .cover-date-stamp {
+    top: 58px;
+    right: 2px;
+    width: 78px;
+    min-height: 18px;
+    padding: 4px 3px 3px;
+    box-shadow: 0 0 0 3px #f1dfb4;
+    font-size: 8px;
+  }
+}
+`;
+
+if (css.includes(marker)) {
+  css = css.slice(0, css.indexOf(marker)).trimEnd() + override;
+} else {
+  css += override;
+}
 fs.writeFileSync(cssPath, css);
