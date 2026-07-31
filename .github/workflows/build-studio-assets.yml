@@ -1,11 +1,6 @@
 name: Build Studio Asset Library
 
 on:
-  pull_request:
-    branches: [main]
-    types: [opened, synchronize, reopened]
-    paths-ignore:
-      - "studio-assets/**"
   workflow_dispatch:
 
 permissions:
@@ -13,13 +8,12 @@ permissions:
 
 jobs:
   extract:
-    if: github.actor != 'github-actions[bot]' && (github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     steps:
       - name: Check out extraction branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
+          ref: ${{ github.ref_name }}
           fetch-depth: 0
 
       - name: Verify and restore extraction engine
@@ -38,7 +32,7 @@ jobs:
 
       - name: Build preservation-only library
         env:
-          SOURCE_COMMIT: ${{ github.event.pull_request.base.sha || github.sha }}
+          SOURCE_COMMIT: ${{ github.sha }}
         run: node /tmp/build-studio-assets.cjs
 
       - name: Commit generated library
@@ -52,4 +46,4 @@ jobs:
             exit 0
           fi
           git commit -m "Build Studio Asset Library v1.0"
-          git push origin HEAD:${{ github.event.pull_request.head.ref || github.ref_name }}
+          git push origin HEAD:${{ github.ref_name }}
