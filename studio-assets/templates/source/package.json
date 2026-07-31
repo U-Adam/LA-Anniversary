@@ -1,0 +1,23 @@
+{
+  "name": "slice-dice-percy",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "node scripts/apply-confirmed-bookings.cjs && node scripts/apply-confirmed-tickets-calendar.cjs && node scripts/apply-production-visuals.mjs && node scripts/restore-original-dolphins.cjs && node scripts/fix-cover-date.cjs && next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@types/leaflet": "^1.9.21",
+    "leaflet": "^1.9.4",
+    "next": "16.2.6",
+    "react": "19.2.6",
+    "react-dom": "19.2.6"
+  },
+  "devDependencies": {
+    "@types/node": "22.19.19",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "typescript": "5.9.3"
+  }
+}
