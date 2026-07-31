@@ -25,6 +25,8 @@ jobs:
         run: base64 --decode scripts/build-studio-assets.cjs.gz.b64 | gzip --decompress > /tmp/build-studio-assets.cjs
 
       - name: Build preservation-only library
+        env:
+          SOURCE_COMMIT: ${{ github.event.pull_request.base.sha || github.sha }}
         run: node /tmp/build-studio-assets.cjs
 
       - name: Commit generated library
