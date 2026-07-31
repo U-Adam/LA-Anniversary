@@ -1,0 +1,41 @@
+name: Build Studio Asset Library
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out extraction branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
+          fetch-depth: 0
+
+      - name: Restore extraction engine
+        shell: bash
+        run: base64 --decode scripts/build-studio-assets.cjs.gz.b64 | gzip --decompress > /tmp/build-studio-assets.cjs
+
+      - name: Build preservation-only library
+        run: node /tmp/build-studio-assets.cjs
+
+      - name: Commit generated library
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add studio-assets
+          if git diff --cached --quiet; then
+            echo "Studio Asset Library is already current."
+            exit 0
+          fi
+          git commit -m "Build Studio Asset Library v1.0"
+          git push origin HEAD:${{ github.event.pull_request.head.ref || github.ref_name }}
