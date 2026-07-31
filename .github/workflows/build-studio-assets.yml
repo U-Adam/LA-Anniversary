@@ -20,9 +20,19 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
           fetch-depth: 0
 
-      - name: Restore extraction engine
+      - name: Verify and restore extraction engine
         shell: bash
-        run: base64 --decode scripts/build-studio-assets.cjs.gz.b64 | gzip --decompress > /tmp/build-studio-assets.cjs
+        run: |
+          sha256sum --check <<'CHECKSUMS'
+          f96ea8d1b9f151ba809d607a9888bc4bc6328f3e06f5991469ec193588a10c73  scripts/studio-assets-engine/part-00
+          cc51531290169b8073a38c2a954690503d2c73d34a03bb9674f264309a7641f0  scripts/studio-assets-engine/part-01
+          04a7bdbb5fc93d5708a428b4227df6d97dc5bf8f0d9a7c1b8224b2554770d26b  scripts/studio-assets-engine/part-02
+          5567e9d5dc99bdcca6bb78bfcbff591b59f85038bc58fe72c14fb053d611483e  scripts/studio-assets-engine/part-03
+          ade50c390ea56077b5ebd6a49edf8973b899aa238eaa6b0ccfd33afeeffa5e2a  scripts/studio-assets-engine/part-04
+          CHECKSUMS
+          test "$(cat scripts/studio-assets-engine/part-* | wc -c)" -eq 14856
+          cat scripts/studio-assets-engine/part-* | base64 --decode | gzip --decompress > /tmp/build-studio-assets.cjs
+          node --check /tmp/build-studio-assets.cjs
 
       - name: Build preservation-only library
         env:
