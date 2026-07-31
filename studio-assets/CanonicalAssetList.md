@@ -4,22 +4,8 @@ One canonical file is selected per unique SHA-256 group. No canonical artwork wa
 
 | Canonical source | Library copy | SHA-256 | Resolution | Alpha | Used now | Master rationale |
 |---|---|---|---:|---|---|---|
-| `public/assets/food/academy-museum.jpg` | `backgrounds/misc/academy-museum.jpg` | `4644a8e249d96dd876d853d069a63f1a936c0faae46de2d2045c8378ec7669e3` | 1100 × 650 | No | Yes | Current production reference |
 | `public/assets/food/bacetti.jpg` | `backgrounds/misc/bacetti.jpg` | `c9eb16bd3f7b3c43ba8c59528a0088e057549d71899858e4171462c4c361c9f3` | 1100 × 650 | No | No direct reference found | Only repository copy for this byte-identical asset |
 | `public/assets/food/bowery-bungalow.jpg` | `backgrounds/misc/bowery-bungalow.jpg` | `18ba9e6f5f669c98960a3d24810e5d578bcc9eadacaed5a2a6bb98b379de3c20` | 1100 × 650 | No | No direct reference found | Only repository copy for this byte-identical asset |
-| `public/assets/hotels/cara-hotel.jpg` | `backgrounds/misc/cara-hotel.jpg` | `8716f12c47eecda63fcdd43083224a3303b9a827d12945bcfda4795cc9fa2232` | 1100 × 650 | No | No direct reference found | Only repository copy for this byte-identical asset |
-| `public/assets/food/cara.jpg` | `backgrounds/misc/cara.jpg` | `50e744c798c2becc167eff43f43c5fbaa788c6441c813a462661c5321a90924d` | 1100 × 650 | No | No direct reference found | Only repository copy for this byte-identical asset |
-| `public/assets/food/firefly.jpg` | `backgrounds/misc/firefly.jpg` | `238bd1922ac9d60deb152e693817f2f2b92f7777a6fdf7f98723af308339fb68` | 1100 × 650 | No | Yes | Current production reference |
-| `public/assets/hotels/hollywood-franklin.jpg` | `backgrounds/misc/hollywood-franklin.jpg` | `d1062476bc2ec452d07820a211bf857908f7828e0a25f9234663cd5e8b4aef1a` | 1100 × 650 | No | No direct reference found | Only repository copy for this byte-identical asset |
-| `public/assets/food/kismet.jpg` | `backgrounds/misc/kismet.jpg` | `9d41096a599294cd07b97ee0906ee31578eca11120e8c059f4734f80020108f3` | 1100 × 650 | No | Yes | Current production reference |
-| `public/assets/food/lacma.jpg` | `backgrounds/misc/lacma.jpg` | `fc0927309fbe02e4afd547c2e0a8f4ad65effc050859012bfbcc84b4bacbbaec` | 1100 × 650 | No | No direct reference found | Only repository copy for this byte-identical asset |
-| `public/assets/hotels/los-angeles-athletic-club.jpg` | `backgrounds/misc/los-angeles-athletic-club.jpg` | `23291ac7048dc82eeaa5115a4102f108a368dcad57072e58e7bead0327e49af0` | 1100 × 650 | No | Yes | Current production reference |
-| `public/assets/food/mother-wolf.jpg` | `backgrounds/misc/mother-wolf.jpg` | `344d67200efbee0f91318c7063447fed64087e0ef6f59da17fb7e8364fddb47b` | 1100 × 650 | No | Yes | Current production reference |
-| `public/assets/food/musso-and-frank-grill.jpg` | `backgrounds/misc/musso-and-frank-grill.jpg` | `e965353386795d6fa6d125b1c367cb8e39d05bc3a1cbd44d778f7972db390f2c` | 1100 × 650 | No | Yes | Current production reference |
-| `public/assets/hotels/the-biltmore.jpg` | `backgrounds/misc/the-biltmore.jpg` | `b64d9e9ffaff7d7e577de6a9bbf4010e53713e61970e665eb0fd003df7dc6517` | 1100 × 650 | No | No direct reference found | Only repository copy for this byte-identical asset |
-| `public/assets/hotels/the-delphi.jpg` | `backgrounds/misc/the-delphi.jpg` | `4f03b397b64875d77e174106d21d05c4c172fffa1d4b8903f32f88cfe1941d4b` | 1100 × 650 | No | Yes | Current production reference |
-| `public/assets/hotels/the-line-la.jpg` | `backgrounds/misc/the-line-la.jpg` | `8c0b13641b4488ccc1c37b200fc89185f28d3ea3c2447ff671b213efc86362e9` | 1100 × 650 | No | No direct reference found | Only repository copy for this byte-identical asset |
-| `public/assets/food/yamashiro-hollywood.jpg` | `backgrounds/misc/yamashiro-hollywood.jpg` | `ec4eb0606434a71be44be081e907190df4b6972cfc44d63c19d8eae49d058401` | 1100 × 650 | No | Yes | Current production reference |
 | `public/assets/venues/academy-museum.jpg` | `backgrounds/venues/academy-museum.jpg` | `dbe6d203bbece7ba20471bbd9603f268336e0199dab515ec3f298494026262a2` | 800 × 800 | No | Yes | Current production reference |
 | `public/assets/venues/alfred-coffee.webp` | `backgrounds/venues/alfred-coffee.webp` | `7549d00349a82e681610cf3268eda1d1421292c723ee074b2304f83edc13d4f5` | 1600 × 1034 | No | Yes | Current production reference |
 | `public/assets/venues/cara-hotel.webp` | `backgrounds/venues/cara-hotel.webp` | `f60c23eb61ab1cbf0e4a83b2d11eb45d4987417f57f5b18a580c4f338d1d126e` | 1500 × 1000 | No | Yes | Current production reference |

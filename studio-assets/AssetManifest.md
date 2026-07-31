@@ -1,11 +1,13 @@
 # Studio Asset Library v1.0 — Asset Manifest
 
 - Source repository: `U-Adam/LA-Anniversary`
-- Source commit: `b48d2db9dd54b690dab90dbcc174f19f90eda15a`
-- Generated: 2026-07-31T04:49:07.706Z
-- Canonical binary assets: 50
-- Exact duplicate groups: 0
-- Canonical binary size: 9,052,702 bytes
+- Source commit: `ac8493163ebceebb73ceaab5ad8b9c55ded78d4d`
+- Generated: 2026-07-31T05:02:58.776Z
+- Repository binary assets inventoried: 50
+- Canonical library assets: 36
+- Archived exact duplicate files: 0
+- Archived same-subject legacy alternates: 14
+- Canonical binary size: 8,618,957 bytes
 
 ## Preservation rules
 
@@ -15,22 +17,8 @@ This library copies source bytes without editing, recompressing, recoloring, res
 
 | Asset | Description | Source | Library folder | Dimensions | Transparency | Motion | Current usage | Recommended category | Missing variants |
 |---|---|---|---|---:|---|---|---|---|---|
-| `backgrounds/misc/academy-museum.jpg` | Production visual asset | `public/assets/food/academy-museum.jpg` | `backgrounds/` | 1100 × 650 | No | Static | app/page.tsx:162 | backgrounds | Original layered/high-resolution source; attribution/license record; alternate production crops |
 | `backgrounds/misc/bacetti.jpg` | Production visual asset | `public/assets/food/bacetti.jpg` | `backgrounds/` | 1100 × 650 | No | Static | Not referenced by current text source | backgrounds | Original layered/high-resolution source; attribution/license record; alternate production crops |
 | `backgrounds/misc/bowery-bungalow.jpg` | Production visual asset | `public/assets/food/bowery-bungalow.jpg` | `backgrounds/` | 1100 × 650 | No | Static | Not referenced by current text source | backgrounds | Original layered/high-resolution source; attribution/license record; alternate production crops |
-| `backgrounds/misc/cara-hotel.jpg` | Production visual asset | `public/assets/hotels/cara-hotel.jpg` | `backgrounds/` | 1100 × 650 | No | Static | Not referenced by current text source | backgrounds | Original layered/high-resolution source; attribution/license record; alternate production crops |
-| `backgrounds/misc/cara.jpg` | Production visual asset | `public/assets/food/cara.jpg` | `backgrounds/` | 1100 × 650 | No | Static | Not referenced by current text source | backgrounds | Original layered/high-resolution source; attribution/license record; alternate production crops |
-| `backgrounds/misc/firefly.jpg` | Production visual asset | `public/assets/food/firefly.jpg` | `backgrounds/` | 1100 × 650 | No | Static | app/page.tsx:244 | backgrounds | Original layered/high-resolution source; attribution/license record; alternate production crops |
-| `backgrounds/misc/hollywood-franklin.jpg` | Production visual asset | `public/assets/hotels/hollywood-franklin.jpg` | `backgrounds/` | 1100 × 650 | No | Static | Not referenced by current text source | backgrounds | Original layered/high-resolution source; attribution/license record; alternate production crops |
-| `backgrounds/misc/kismet.jpg` | Production visual asset | `public/assets/food/kismet.jpg` | `backgrounds/` | 1100 × 650 | No | Static | app/page.tsx:257 | backgrounds | Original layered/high-resolution source; attribution/license record; alternate production crops |
-| `backgrounds/misc/lacma.jpg` | Production visual asset | `public/assets/food/lacma.jpg` | `backgrounds/` | 1100 × 650 | No | Static | Not referenced by current text source | backgrounds | Original layered/high-resolution source; attribution/license record; alternate production crops |
-| `backgrounds/misc/los-angeles-athletic-club.jpg` | Production visual asset | `public/assets/hotels/los-angeles-athletic-club.jpg` | `backgrounds/` | 1100 × 650 | No | Static | app/page.tsx:100 | backgrounds | Original layered/high-resolution source; attribution/license record; alternate production crops |
-| `backgrounds/misc/mother-wolf.jpg` | Production visual asset | `public/assets/food/mother-wolf.jpg` | `backgrounds/` | 1100 × 650 | No | Static | app/page.tsx:204 | backgrounds | Original layered/high-resolution source; attribution/license record; alternate production crops |
-| `backgrounds/misc/musso-and-frank-grill.jpg` | Production visual asset | `public/assets/food/musso-and-frank-grill.jpg` | `backgrounds/` | 1100 × 650 | No | Static | app/page.tsx:224 | backgrounds | Original layered/high-resolution source; attribution/license record; alternate production crops |
-| `backgrounds/misc/the-biltmore.jpg` | Production visual asset | `public/assets/hotels/the-biltmore.jpg` | `backgrounds/` | 1100 × 650 | No | Static | Not referenced by current text source | backgrounds | Original layered/high-resolution source; attribution/license record; alternate production crops |
-| `backgrounds/misc/the-delphi.jpg` | Production visual asset | `public/assets/hotels/the-delphi.jpg` | `backgrounds/` | 1100 × 650 | No | Static | app/page.tsx:63 | backgrounds | Original layered/high-resolution source; attribution/license record; alternate production crops |
-| `backgrounds/misc/the-line-la.jpg` | Production visual asset | `public/assets/hotels/the-line-la.jpg` | `backgrounds/` | 1100 × 650 | No | Static | Not referenced by current text source | backgrounds | Original layered/high-resolution source; attribution/license record; alternate production crops |
-| `backgrounds/misc/yamashiro-hollywood.jpg` | Production visual asset | `public/assets/food/yamashiro-hollywood.jpg` | `backgrounds/` | 1100 × 650 | No | Static | app/page.tsx:234 | backgrounds | Original layered/high-resolution source; attribution/license record; alternate production crops |
 | `backgrounds/venues/academy-museum.jpg` | Venue/environment card image | `public/assets/venues/academy-museum.jpg` | `backgrounds/` | 800 × 800 | No | Static | app/page.tsx:162 | backgrounds | Original licensed master; attribution/license record; alternate crops; high-resolution export |
 | `backgrounds/venues/alfred-coffee.webp` | Venue/environment card image | `public/assets/venues/alfred-coffee.webp` | `backgrounds/` | 1600 × 1034 | No | Static | app/page.tsx:289 | backgrounds | Original licensed master; attribution/license record; alternate crops; high-resolution export |
 | `backgrounds/venues/cara-hotel.webp` | Venue/environment card image | `public/assets/venues/cara-hotel.webp` | `backgrounds/` | 1500 × 1000 | No | Static | app/page.tsx:107 | backgrounds | Original licensed master; attribution/license record; alternate crops; high-resolution export |
@@ -57,7 +45,7 @@ This library copies source bytes without editing, recompressing, recoloring, res
 | `backgrounds/venues/universal-studios.jpeg` | Venue/environment card image | `public/assets/venues/universal-studios.jpeg` | `backgrounds/` | 1600 × 1200 | No | Static | app/page.tsx:126, app/page.tsx:138, scripts/apply-confirmed-tickets-calendar.cjs:12 | backgrounds | Original licensed master; attribution/license record; alternate crops; high-resolution export |
 | `backgrounds/venues/voodoo-doughnut.webp` | Venue/environment card image | `public/assets/venues/voodoo-doughnut.webp` | `backgrounds/` | 525 × 700 | No | Static | app/page.tsx:297 | backgrounds | Original licensed master; attribution/license record; alternate crops; high-resolution export |
 | `backgrounds/venues/yamashiro-hollywood.jpg` | Venue/environment card image | `public/assets/venues/yamashiro-hollywood.jpg` | `backgrounds/` | 576 × 383 | No | Static | app/page.tsx:234 | backgrounds | Original licensed master; attribution/license record; alternate crops; high-resolution export |
-| `characters/character-bible.png` | Production visual asset | `public/assets/reference/character-bible.png` | `characters/` | 1536 × 1024 | No | Static | Not referenced by current text source | characters | Original layered/high-resolution source; attribution/license record; alternate production crops |
+| `characters/character-bible.png` | Official Slice, Dice & Percy composite character reference sheet | `public/assets/reference/character-bible.png` | `characters/` | 1536 × 1024 | No | Static | Not referenced by current text source | characters | Layered/editable character bible; isolated transparent masters; expression, turnaround and pose sheets |
 | `characters/dolphins/dolphin-jump.png` | Official dolphin character/effect artwork | `public/assets/events/dolphin-jump.png` | `characters/` | 720 × 560 | Yes | Static | app/page.tsx:676, scripts/apply-production-visuals.mjs:19, scripts/apply-production-visuals.mjs:9, scripts/restore-original-dolphins.cjs:8 | characters | Turnaround; pose sheet; animation sprite sheet/frame sequence; higher-resolution source |
 | `characters/dolphins/dolphin-rise.png` | Official dolphin character/effect artwork | `public/assets/events/dolphin-rise.png` | `characters/` | 820 × 560 | Yes | Static | app/page.tsx:675, scripts/apply-production-visuals.mjs:15, scripts/apply-production-visuals.mjs:17, scripts/apply-production-visuals.mjs:8, scripts/restore-original-dolphins.cjs:7 | characters | Turnaround; pose sheet; animation sprite sheet/frame sequence; higher-resolution source |
 | `characters/dolphins/dolphin-swim.png` | Official dolphin character/effect artwork | `public/assets/events/dolphin-swim.png` | `characters/` | 1040 × 410 | Yes | Static | app/page.tsx:674, scripts/apply-production-visuals.mjs:13, scripts/apply-production-visuals.mjs:14, scripts/apply-production-visuals.mjs:16, scripts/apply-production-visuals.mjs:18, scripts/apply-production-visuals.mjs:7, scripts/restore-original-dolphins.cjs:6 | characters | Turnaround; pose sheet; animation sprite sheet/frame sequence; higher-resolution source |
@@ -66,13 +54,34 @@ This library copies source bytes without editing, recompressing, recoloring, res
 | `covers/the-odyssey-official-poster.jpg` | Official Odyssey movie-card poster artwork stored in the repository | `public/assets/events/the-odyssey-official-poster.jpg` | `covers/` | 1400 × 2068 | No | Static | app/page.tsx:150 | covers | Textless/key-art variant; print-resolution/licensing source |
 | `props/slices-mystery-box.webp` | Official Slice’s Mystery Box prop/card artwork | `public/assets/events/slices-mystery-box.webp` | `props/` | 1100 × 650 | No | Static | app/page.tsx:191 | props | Transparent isolated prop; layered source; alternate angles/open-state variant |
 
+## Archived duplicates and legacy alternates
+
+These files remain untouched at their original website paths. The library classifies preservation copies under `archive/` so the current canonical production version is unambiguous.
+
+| Archived file | Source | Dimensions | Transparency | Canonical replacement | Archive reason |
+|---|---|---:|---|---|---|
+| `archive/alternates/public/assets/food/academy-museum.jpg` | `public/assets/food/academy-museum.jpg` | 1100 × 650 | No | `public/assets/venues/academy-museum.jpg` | Same-subject legacy alternate (academy-museum) |
+| `archive/alternates/public/assets/food/cara.jpg` | `public/assets/food/cara.jpg` | 1100 × 650 | No | `public/assets/venues/cara-restaurant.webp` | Same-subject legacy alternate (cara-restaurant) |
+| `archive/alternates/public/assets/food/firefly.jpg` | `public/assets/food/firefly.jpg` | 1100 × 650 | No | `public/assets/venues/firefly.jpg` | Same-subject legacy alternate (firefly) |
+| `archive/alternates/public/assets/food/kismet.jpg` | `public/assets/food/kismet.jpg` | 1100 × 650 | No | `public/assets/venues/kismet.jpg` | Same-subject legacy alternate (kismet) |
+| `archive/alternates/public/assets/food/lacma.jpg` | `public/assets/food/lacma.jpg` | 1100 × 650 | No | `public/assets/venues/lacma-urban-light.webp` | Same-subject legacy alternate (lacma-urban-light) |
+| `archive/alternates/public/assets/food/mother-wolf.jpg` | `public/assets/food/mother-wolf.jpg` | 1100 × 650 | No | `public/assets/venues/mother-wolf.jpg` | Same-subject legacy alternate (mother-wolf) |
+| `archive/alternates/public/assets/food/musso-and-frank-grill.jpg` | `public/assets/food/musso-and-frank-grill.jpg` | 1100 × 650 | No | `public/assets/venues/musso-and-frank-grill.jpg` | Same-subject legacy alternate (musso-and-frank-grill) |
+| `archive/alternates/public/assets/food/yamashiro-hollywood.jpg` | `public/assets/food/yamashiro-hollywood.jpg` | 1100 × 650 | No | `public/assets/venues/yamashiro-hollywood.jpg` | Same-subject legacy alternate (yamashiro-hollywood) |
+| `archive/alternates/public/assets/hotels/cara-hotel.jpg` | `public/assets/hotels/cara-hotel.jpg` | 1100 × 650 | No | `public/assets/venues/cara-hotel.webp` | Same-subject legacy alternate (cara-hotel) |
+| `archive/alternates/public/assets/hotels/hollywood-franklin.jpg` | `public/assets/hotels/hollywood-franklin.jpg` | 1100 × 650 | No | `public/assets/venues/hollywood-franklin.webp` | Same-subject legacy alternate (hollywood-franklin) |
+| `archive/alternates/public/assets/hotels/los-angeles-athletic-club.jpg` | `public/assets/hotels/los-angeles-athletic-club.jpg` | 1100 × 650 | No | `public/assets/venues/los-angeles-athletic-club.jpg` | Same-subject legacy alternate (los-angeles-athletic-club) |
+| `archive/alternates/public/assets/hotels/the-biltmore.jpg` | `public/assets/hotels/the-biltmore.jpg` | 1100 × 650 | No | `public/assets/venues/the-biltmore.webp` | Same-subject legacy alternate (the-biltmore) |
+| `archive/alternates/public/assets/hotels/the-delphi.jpg` | `public/assets/hotels/the-delphi.jpg` | 1100 × 650 | No | `public/assets/venues/the-delphi.jpg` | Same-subject legacy alternate (the-delphi) |
+| `archive/alternates/public/assets/hotels/the-line-la.jpg` | `public/assets/hotels/the-line-la.jpg` | 1100 × 650 | No | `public/assets/venues/the-line-la.webp` | Same-subject legacy alternate (the-line-la) |
+
 ## Character asset status
 
 | Character | Canonical source | Standalone file | Transparency | Animation source | Master determination |
 |---|---|---|---|---|---|
-| Slice | `public/assets/reference/comic-cover.png` | No standalone production file found | Embedded in composite; not independently transparent | CSS/React crop and transform from the composite cover | Composite cover is the only repository-backed master; no crop was generated |
-| Dice | `public/assets/reference/comic-cover.png` | No standalone production file found | Embedded in composite; not independently transparent | CSS/React crop and transform from the composite cover | Composite cover is the only repository-backed master; no crop was generated |
-| Percy | `public/assets/reference/comic-cover.png` | No standalone production file found | Embedded in composite; not independently transparent | CSS/React crop and transform from the composite cover | Composite cover is the only repository-backed master; no crop was generated |
+| Slice | `public/assets/reference/character-bible.png`<br>`public/assets/reference/comic-cover.webp`<br>`public/assets/reference/comic-cover.png` | No isolated full-body production file found | Embedded in opaque composite sheets; not independently transparent | CSS/React crop and transform from the deployed WebP cover | Character bible is the canonical reference sheet; comic-cover.webp is the deployed website master; comic-cover.png is the lossless preserved cover variant |
+| Dice | `public/assets/reference/character-bible.png`<br>`public/assets/reference/comic-cover.webp`<br>`public/assets/reference/comic-cover.png` | No isolated full-body production file found | Embedded in opaque composite sheets; not independently transparent | CSS/React crop and transform from the deployed WebP cover | Character bible is the canonical reference sheet; comic-cover.webp is the deployed website master; comic-cover.png is the lossless preserved cover variant |
+| Percy | `public/assets/reference/character-bible.png`<br>`public/assets/reference/comic-cover.webp`<br>`public/assets/reference/comic-cover.png` | No isolated full-body production file found | Embedded in opaque composite sheets; not independently transparent | CSS/React crop and transform from the deployed WebP cover | Character bible is the canonical reference sheet; comic-cover.webp is the deployed website master; comic-cover.png is the lossless preserved cover variant |
 | Dolphins | `public/assets/events/dolphin-jump.png`<br>`public/assets/events/dolphin-rise.png`<br>`public/assets/events/dolphin-swim.png` | 3 production file(s) | Yes, Yes, Yes | Build-time CSS keyframes plus source PNGs | Individual repository files are canonical |
 
 ## Branding
